@@ -6,9 +6,24 @@
     <string name="main_tittle_total_km">Kilometros totales recorridos :</string>
     <string name="main_tittle_total_medition">: Mediciones totales realizadas</string>
     <string name="main_button_loadSaved">CARGAR RECORRIDOS</string>
+    <string name="main_button_activityLocation">ACTIVITY LOCATION</string>
+    <string name="main_button_activityMaps">ACTIVITY MAPS</string>
     <string name="main_button_newReco">NUEVO RECORRIDO</string>
+    <string name="main_button_conf">Conf</string>
 
     <string name="setting_button_save">GUARDAR</string>
     <string name="setting_button_cancel">CANCELAR</string>
+
+    <string name="createRoute_text_name">Nombre de recorrido</string>
+    <string name="createRoute_textInput_name">Nombre</string>
+    <string name="createRoute_text_type">Tipos de antenas</string>
+    <string name="createRoute_button_create">CREAR</string>
+    <string name="createRoute_button_cancel">CANCELAR</string>
+    <string name="createRoute_checkbox_4G">4G</string>
+    <string name="createRoute_checkbox_3G">3G</string>
+    <string name="createRoute_checkbox_2G">2G</string>
+
+    <string name="loadRoute_button_cancel">CANCELAR</string>
+    <string name="loadRoute_button_load">CARGAR</string>
 
 </resources>

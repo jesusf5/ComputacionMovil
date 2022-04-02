@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingActivity">
+    tools:context=".LoadRouteActivity">
 
     <Button
         android:id="@+id/button3"
@@ -12,8 +12,8 @@
         android:layout_height="60dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:onClick="saveAndOpenMainActivity"
-        android:text="@string/setting_button_save"
+        android:onClick="loadRoute"
+        android:text="@string/loadRoute_button_load"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -23,8 +23,8 @@
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="20dp"
-        android:onClick="openMainActivity"
-        android:text="@string/setting_button_cancel"
+        android:onClick="cancelMainActivity"
+        android:text="@string/loadRoute_button_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

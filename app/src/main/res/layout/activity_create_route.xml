@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateRouteActivity" >
+
+    <TextView
+        android:id="@+id/CreateRouteTittleName"
+        android:layout_width="191dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="@string/createRoute_text_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/CreateRouteTittleAntennaType"
+        android:layout_width="219dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="@string/createRoute_text_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/createRouteTextInputName" />
+
+    <EditText
+        android:id="@+id/createRouteTextInputName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/createRoute_textInput_name"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/CreateRouteTittleName" />
+
+    <Button
+        android:id="@+id/createRouteButtonCreate"
+        android:layout_width="158dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:onClick="createRoute"
+        android:text="@string/createRoute_button_create"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/createRouteButtonCancel"
+        android:layout_width="158dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:onClick="cancelMainActivity"
+        android:text="@string/createRoute_button_cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/createRouteAntenna4GCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:checked="true"
+        android:text="@string/createRoute_checkbox_4G"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/CreateRouteTittleAntennaType" />
+
+    <CheckBox
+        android:id="@+id/createRouteAntenna3GCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/createRoute_checkbox_3G"
+        app:layout_constraintEnd_toStartOf="@+id/createRouteAntenna2GCheck"
+        app:layout_constraintStart_toEndOf="@+id/createRouteAntenna4GCheck"
+        app:layout_constraintTop_toBottomOf="@+id/CreateRouteTittleAntennaType" />
+
+    <CheckBox
+        android:id="@+id/createRouteAntenna2GCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/createRoute_checkbox_2G"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/CreateRouteTittleAntennaType" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

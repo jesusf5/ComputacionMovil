@@ -27,11 +27,14 @@ public class LocationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
+
         client = LocationServices.getFusedLocationProviderClient(this);
-        LocationRequest request = LocationRequest.create();
+        request = LocationRequest.create();
+
         request.setInterval(6000);
         request.setFastestInterval(5000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
         callback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult){
