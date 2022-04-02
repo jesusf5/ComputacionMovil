@@ -32,4 +32,19 @@ public class MainActivity extends AppCompatActivity {
         Intent intent=new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
+
+    public void openSettingActivity(View w){
+        Intent intent=new Intent(this, SettingActivity.class);
+        startActivity(intent);
+    }
+
+    public void openCreateRouteActivity(View w){
+        Intent intent=new Intent(this, CreateRouteActivity.class);
+        startActivity(intent);
+    }
+
+    public void openLoadRouteActivity(View w){
+        Intent intent=new Intent(this, LoadRouteActivity.class);
+        startActivity(intent);
+    }
 }

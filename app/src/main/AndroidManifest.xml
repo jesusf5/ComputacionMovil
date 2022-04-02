@@ -43,6 +43,9 @@
         <activity
             android:name=".LocationActivity"
             android:exported="true" />
+        <activity android:name=".LoadRouteActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".CreateRouteActivity" />
     </application>
 
 </manifest>

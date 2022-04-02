@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Computacion Movil</string>
+    <string name="title_activity_maps">MapsActivity</string>
+
+    <string name="main_tittle_total_km">Quilòmetres totals recorreguts :</string>
+    <string name="main_tittle_total_medition">: Mesuraments totals realitzats</string>
+    <string name="main_button_loadSaved">CARREGAR RECORREGUTS</string>
+    <string name="main_button_newReco">NOU RECORREGUT</string>
+
+    <string name="setting_button_save">GUARDAR</string>
+    <string name="setting_button_cancel">CANCEL·LAR</string>
+
+</resources>

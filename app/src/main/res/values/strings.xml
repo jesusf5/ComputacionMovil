@@ -1,4 +1,29 @@
 <resources>
     <string name="app_name">Computacion Movil</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="NULL" translatable="false">NULL</string>
+
+    <string name="main_tittle_total_km">Total kilometers traveled :</string>
+    <string name="main_tittle_total_medition">: Total measurements made</string>
+    <string name="main_button_loadSaved">LOAD ROUTES</string>
+    <string name="main_button_activityLocation" translatable="false">ACTIVITY LOCATION</string>
+    <string name="main_button_activityMaps" translatable="false">ACTIVITY MAPS</string>
+    <string name="main_button_newReco">NEW ROUTE</string>
+    <string name="main_button_conf" translatable="false">Conf</string>
+
+    <string name="setting_button_save">SAVE</string>
+    <string name="setting_button_cancel">@android:string/cancel</string>
+
+    <string name="createRoute_text_name" translatable="false">Route name</string>
+    <string name="createRoute_textInput_name" translatable="false">Name</string>
+    <string name="createRoute_text_type" translatable="false">Antenna type</string>
+    <string name="createRoute_button_create" translatable="false">CREATE</string>
+    <string name="createRoute_button_cancel" translatable="false">@android:string/cancel</string>
+    <string name="createRoute_checkbox_4G" translatable="false">4G</string>
+    <string name="createRoute_checkbox_3G" translatable="false">3G</string>
+    <string name="createRoute_checkbox_2G" translatable="false">2G</string>
+
+    <string name="loadRoute_button_cancel" translatable="false">@android:string/cancel</string>
+    <string name="loadRoute_button_load" translatable="false">LOAD</string>
+
 </resources>
