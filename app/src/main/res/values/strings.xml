@@ -22,6 +22,17 @@
     <string name="createRoute_checkbox_4G">4G</string>
     <string name="createRoute_checkbox_3G">3G</string>
     <string name="createRoute_checkbox_2G">2G</string>
+    <string name="createRoute_tittle_interval" translatable="false">Select the update interval for measurements(seconds)</string>
+    <string name="createRoute_textInput_interval" translatable="false">10</string>
+    <string name="createRoute_tittle_selectSim" translatable="false">Select the SIM to do measurements</string>
+    <string name="createRoute_checkbox_SIM1" translatable="false">SIM 1</string>
+    <string name="createRoute_checkbox_SIM2" translatable="false">SIM 2</string>
+
+    <string name="createRoute_error_name" translatable="false">The name cannot be empty or contain more than 100 characters</string>
+    <string name="createRoute_error_interval" translatable="false">The interval in seconds must be between 5 and 30 seconds</string>
+    <string name="createRoute_error_antenna" translatable="false">ANTENNA ERROR</string>
+    <string name="createRoute_error_SIM" translatable="false">At least one SIM must be selected</string>
+
 
     <string name="loadRoute_button_cancel">@android:string/cancel</string>
     <string name="loadRoute_button_load">LOAD</string>
@@ -31,6 +42,9 @@
     <string name="mapsRouteActivity_button_save" translatable="false">SAVE</string>
     <string name="mapsRouteActivity_button_newPhase" translatable="false">NEW PHASE</string>
     <string name="mapsRouteActivity_text_nameRoute" translatable="false">Name route:</string>
-    <string name="mapsRouteActivity_text_selectedAntennas" translatable="false">Selected antennas:</string>
+    <string name="mapsRouteActivity_text_selectedAntennas" translatable="false">Selected antenna:</string>
+    <string name="mapsRouteActivity_text_nameSIMs" translatable="false">SIMs names:</string>
+    <string name="mapsRouteActivity_text_namePhase" translatable="false">Current phase: </string>
+    <string name="mapsRouteActivity_text_titlePhase" translatable="false">Phase</string>
 
 </resources>

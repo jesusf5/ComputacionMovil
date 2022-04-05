@@ -1,6 +1,7 @@
 package com.example.computacionmovil;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +16,8 @@ import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.TelephonyManager;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +37,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -41,9 +46,10 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     //Creamos una serie de variables que se extraen directamente desde la pantalla de creación de la ruta
     private String name; //Nombre de la ruta que se esta creando, necesario para al cargar cada ruta saber cual es cada una.
     private int antenna; //TODO de momento se deja al usuario especificar si quiere realizar mediciones en 4G,3G o 2G, pero hay que ver si es correcto o si nos interesa permitir en varias a la vez
-    private int interval = 10000; //TODO Se me ha ocurrido que también podriamos permitir al usuario especificar el intervalo de cada medición
+    private int interval = 10000; //Permitimos al usuario especificar un intervalo de actualizaciones pero por defecto ponemos un intervalo de 10 segundos
+    private int selectedSim = 0; //TODO Podemos permitir al usuario seleccionar en que SIM quiere realizar las lecturas si esque tiene más de una SIM
     // Por ejemplo entre 5 y 30 segundos
-    private TextView valueNameRoute, valueSelectedAntennas, valueReadAntennas;
+    private TextView valueNameRoute, valueSelectedAntennas, valueReadAntennas, valueNamePhase, valueNameSIMs;
 
     private MapView mMapView;
 
@@ -59,6 +65,13 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
 
     //Valor leido por la antena correspondiente
     private int valueAntenna = 0;
+
+    //Creamos una variable para definir el número de la fase en la que nos encotramos
+    private int phase = 1;
+
+    //Creamos una lista para mostrar en tiempo real las medidas
+    private ListView listMeasures;
+    private ArrayAdapter<String> arrayLecturas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,16 +90,25 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
             name = getIntent().getStringExtra("name");
             antenna = getIntent().getIntExtra("antennaSelected", 4);
             interval = getIntent().getIntExtra("interval", 10000);
+            selectedSim = getIntent().getIntExtra("selectedSim", 0);
         }
 
         valueNameRoute = findViewById(R.id.valueNameRoute);
         valueSelectedAntennas = findViewById(R.id.valueSelectedAntennas);
         valueReadAntennas = findViewById(R.id.valueReadAntennas);
+        valueNamePhase = findViewById(R.id.valueNamePhase);
+        valueNameSIMs = findViewById(R.id.valueNameSIMs);
+
+        listMeasures = findViewById(R.id.listViewMeasure);
+        arrayLecturas = new ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+
 
         valueNameRoute.setText(name);
         valueSelectedAntennas.setText(antenna + "G");
 
-        //Creamos la solicitudes periodicas de la ubicación por ejemplo cada 10 segundos //TODO Ejemplo temporal
+        valueNamePhase.setText(String.valueOf(phase));
+
+        //Creamos la solicitudes periodicas de la ubicación cada tiempo especificado por el usuario
         client = LocationServices.getFusedLocationProviderClient(this);
         request = LocationRequest.create();
 
@@ -103,9 +125,12 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                     newUbication = true;
                 }
                 if (newUbication) {
-                    valueAntenna = readValueAntenna();
-                    ((TextView) findViewById(R.id.valueReadAntennas)).setText("Última lectura: " + valueAntenna + " dbm");
-                    gM.addMarker(new MarkerOptions().position(new LatLng(locationActual.getLatitude(), locationActual.getLongitude())).title(antenna + "G: " + valueAntenna + " dbm")).setIcon(obtenerTipoMarcador(valueAntenna, antenna));
+                    valueAntenna = readValueAntenna(selectedSim);
+                    String newLine = (String) ("Phase " + phase + ", " + antenna + "G: " + valueAntenna + " dbm");
+                    arrayLecturas.add(newLine);
+                    listMeasures.setAdapter(arrayLecturas);
+                    valueReadAntennas.setText(newLine);
+                    gM.addMarker(new MarkerOptions().position(new LatLng(locationActual.getLatitude(), locationActual.getLongitude())).title(newLine)).setIcon(obtenerTipoMarcador(valueAntenna, antenna));
                     newUbication = false;
                 }
             }
@@ -138,33 +163,62 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
         startShowingLocation();
     }
 
-    private int readValueAntenna() {
+    @SuppressLint("NewApi")
+    private int readValueAntenna(int selectedSim) {
+
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)&&(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 0);
         }
-        List<CellInfo> cellInfos = telephonyManager.getAllCellInfo();   //This will give info of all sims present inside your mobile
-        if(cellInfos!=null){
-            int strength = 0;
+        List<CellInfo> cellInfos = telephonyManager.getAllCellInfo();   //Obtiene información sobre todas las SIMs del teléfono movil
+        String datosSims = "";
+        if(cellInfos!=null && selectedSim==0){
+            int strength = -200;
             for (int i = 0; i<cellInfos.size(); i++){
                 if (cellInfos.get(i).isRegistered()){
-                    //TODO REVISAR PORQUE ESTO PETA
-                    /*if(cellInfos.get(i) instanceof CellInfoWcdma){
+                    if(cellInfos.get(i) instanceof CellInfoWcdma){
                         CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) telephonyManager.getAllCellInfo().get(0);
                         CellSignalStrengthWcdma cellSignalStrengthWcdma = cellInfoWcdma.getCellSignalStrength();
                         strength = cellSignalStrengthWcdma.getDbm();
-                    }*/ if(cellInfos.get(i) instanceof CellInfoGsm){
+                        datosSims = datosSims + "\n" + cellInfoWcdma.getCellIdentity().getOperatorAlphaShort().toString();
+                    }else if(cellInfos.get(i) instanceof CellInfoGsm){
                         CellInfoGsm cellInfogsm = (CellInfoGsm) telephonyManager.getAllCellInfo().get(0);
                         CellSignalStrengthGsm cellSignalStrengthGsm = cellInfogsm.getCellSignalStrength();
                         strength = cellSignalStrengthGsm.getDbm();
+                        datosSims = datosSims + "\n" + cellInfogsm.getCellIdentity().getOperatorAlphaShort().toString();
                     }else if(cellInfos.get(i) instanceof CellInfoLte){
                         CellInfoLte cellInfoLte = (CellInfoLte) telephonyManager.getAllCellInfo().get(0);
                         CellSignalStrengthLte cellSignalStrengthLte = cellInfoLte.getCellSignalStrength();
                         strength = cellSignalStrengthLte.getDbm();
+                        datosSims = datosSims + "\n" + cellInfoLte.getCellIdentity().getOperatorAlphaShort().toString();
                     }
+
                 }
             }
+            valueNameSIMs.setText(datosSims);
+            return strength;
+        }//En caso de que se haya seleccionado una tarjeta SIM solo leemos las señales de dicha targeta
+        else if(cellInfos!=null && cellInfos.get(selectedSim-1).isRegistered()){
+            int strength = -200;
+            if(cellInfos.get(selectedSim-1) instanceof CellInfoWcdma){
+                CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) telephonyManager.getAllCellInfo().get(0);
+                CellSignalStrengthWcdma cellSignalStrengthWcdma = cellInfoWcdma.getCellSignalStrength();
+                strength = cellSignalStrengthWcdma.getDbm();
+                datosSims = datosSims + "\n" + cellInfoWcdma.getCellIdentity().getOperatorAlphaShort().toString();
+            }else if(cellInfos.get(selectedSim-1) instanceof CellInfoGsm){
+                CellInfoGsm cellInfogsm = (CellInfoGsm) telephonyManager.getAllCellInfo().get(0);
+                CellSignalStrengthGsm cellSignalStrengthGsm = cellInfogsm.getCellSignalStrength();
+                strength = cellSignalStrengthGsm.getDbm();
+                datosSims = datosSims + "\n" + cellInfogsm.getCellIdentity().getOperatorAlphaShort().toString();
+            }else if(cellInfos.get(selectedSim-1) instanceof CellInfoLte){
+                CellInfoLte cellInfoLte = (CellInfoLte) telephonyManager.getAllCellInfo().get(0);
+                CellSignalStrengthLte cellSignalStrengthLte = cellInfoLte.getCellSignalStrength();
+                strength = cellSignalStrengthLte.getDbm();
+                datosSims = datosSims + "\n" + cellInfoLte.getCellIdentity().getOperatorAlphaShort().toString();
+            }
+            valueNameSIMs.setText(datosSims);
             return strength;
         }
         return 0;
@@ -175,42 +229,64 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
         //TODO Fuente de los datos(4G y 3G): https://www.xatakandroid.com/productividad-herramientas/como-saber-intensidad-senal-movil-android-que-significan-valores-dbm
         //TODO Fuente de los datos(2G): https://norfipc.com/redes/intensidad-nivel-senal-redes-moviles-2g-3g-4g.php
         if(antenna==4){
+            //El rango del 4G se establece entre 30 dbm de diferencia, mientras que la escala de color va desde 0(ROJO)-120(VERDE)
+            //Es decir, por cada decibelio de diferencia debemos aumentar en 4 la escala de color
+            //Por ejemplo:
+            // -90dmp -> 120 (Verde)
+            //-91dbm(120-91=29) -> 116 (Menos verde)
+            //-92dbm(120-92=28) -> 112 (Aun menos verde)
+            //....
+            //-119(120-119=1) -> 4 (Muy rojo)
+            //-120 -> 0 (Muy rojo)
+            //Y así seguimos, podemos operar más facil si hacemos ((-)MinValue)+(valueAntenna)
+            int valorRealDBM = 120+valueAntenna;
             if (-90 <= valueAntenna) {
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-            } else if (-91 >= valueAntenna && -105 <= valueAntenna) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-            } else if (-106 >= valueAntenna && -110 <= valueAntenna) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
-            } else if (-111 >= valueAntenna && -119 <= valueAntenna) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+            } else if (-91 >= valueAntenna && -119 <= valueAntenna) {
+                return BitmapDescriptorFactory.defaultMarker(valorRealDBM*4);
             } else if (-120 >= valueAntenna) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET);
+                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
             }
         } else if(antenna==3){
+            //Para el rango del 3G se establece entre 40 dbm de diferencia, mientras que la escala de color va desde 0(ROJO)-120(VERDE)
+            //Es decir, por cada decibelio de diferencia debemos aumentar en 3 la escala de color
+            //Por ejemplo:
+            // -70dmp -> 120 (Verde)
+            //-71dbm(110-91=39) -> (39*3)117 (Menos verde)
+            //-72dbm(110-92=38) -> (38*3)114 (Aun menos verde)
+            //....
+            //-109(110-109=1) -> (1*3)3 (Muy rojo)
+            //-110 -> 0 (Muy rojo)
+            //Y así seguimos, podemos operar más facil si hacemos ((-)MinValue)+(valueAntenna)
+            int valorRealDBM = 110+valueAntenna;
             if (-70 <= valueAntenna) {
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-            } else if (-71 >= valueAntenna && -85 <= valueAntenna) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-            } else if (-86 >= valueAntenna && -100 <= valueAntenna) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
-            } else if (-101 >= valueAntenna && -109 <= valueAntenna) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+            } else if (-71 >= valueAntenna && -109 <= valueAntenna) {
+                return BitmapDescriptorFactory.defaultMarker(valorRealDBM*3);
             } else if (-110 >= valueAntenna) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET);
+                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
             }
         } else if(antenna==2){
-        if (-79 <= valueAntenna) {
-            return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-        } else if (-80 >= valueAntenna && -95 <= valueAntenna) {
-            return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-        } else if (-96 >= valueAntenna && -104 <= valueAntenna) {
-            return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
-        } else if (-105 >= valueAntenna && -112 <= valueAntenna) {
-            return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-        } else if (-113 >= valueAntenna) {
-            return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET);
+
+            //Para el rango del 3G se establece entre 40 dbm de diferencia, mientras que la escala de color va desde 0(ROJO)-120(VERDE)
+            //Es decir, por cada decibelio de diferencia debemos aumentar en 3 la escala de color
+            //Por ejemplo:
+            // -80dmp -> 120 (Verde)
+            //-81dbm(120-91=39) -> (39*3)117 (Menos verde)
+            //-82dbm(120-92=38) -> (38*3)114 (Aun menos verde)
+            //....
+            //-119(120-119=1) -> (1*3)3 (Muy rojo)
+            //-120 -> 0 (Muy rojo)
+            //Y así seguimos, podemos operar más facil si hacemos ((-)MinValue)+(valueAntenna)
+            int valorRealDBM = 120+valueAntenna;
+            if (-80 <= valueAntenna) {
+                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+            } else if (-81 >= valueAntenna && -119 <= valueAntenna) {
+                return BitmapDescriptorFactory.defaultMarker(valorRealDBM*3);
+            } else if (-120 >= valueAntenna) {
+                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+            }
         }
-    }
         return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
     }
 
@@ -263,6 +339,7 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void newPhase(View w){
-
+        phase=phase+1;
+        valueNamePhase.setText(String.valueOf(phase));
     }
 }

@@ -42,19 +42,20 @@
         android:id="@+id/valueReadAntennas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="@string/NULL"
-        app:layout_constraintBottom_toTopOf="@+id/button9"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.472"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
     <TextView
         android:id="@+id/textNameRoute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
         android:text="@string/mapsRouteActivity_text_nameRoute"
-        app:layout_constraintBottom_toTopOf="@+id/valueReadAntennas"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
 
@@ -62,8 +63,8 @@
         android:id="@+id/valueNameRoute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="@string/NULL"
-        app:layout_constraintBottom_toTopOf="@+id/valueReadAntennas"
         app:layout_constraintStart_toEndOf="@+id/textNameRoute"
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
 
@@ -71,8 +72,8 @@
         android:id="@+id/textSelectedAntennas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="@string/mapsRouteActivity_text_selectedAntennas"
-        app:layout_constraintBottom_toTopOf="@+id/valueReadAntennas"
         app:layout_constraintEnd_toStartOf="@+id/valueSelectedAntennas"
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
 
@@ -80,9 +81,9 @@
         android:id="@+id/valueSelectedAntennas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
         android:text="@string/NULL"
-        app:layout_constraintBottom_toTopOf="@+id/valueReadAntennas"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
 
@@ -90,11 +91,79 @@
         android:id="@+id/textView11"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:contentDescription="@string/NULL"
         android:text=" "
-        app:layout_constraintBottom_toTopOf="@+id/valueReadAntennas"
         app:layout_constraintEnd_toStartOf="@+id/textSelectedAntennas"
         app:layout_constraintStart_toEndOf="@+id/valueNameRoute"
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
+
+    <TextView
+        android:id="@+id/textNameSIMs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/mapsRouteActivity_text_nameSIMs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/valueReadAntennas" />
+
+    <TextView
+        android:id="@+id/valueNameSIMs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/NULL"
+        app:layout_constraintStart_toEndOf="@+id/textNameSIMs"
+        app:layout_constraintTop_toBottomOf="@+id/valueReadAntennas" />
+
+    <TextView
+        android:id="@+id/textNamePhase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/mapsRouteActivity_text_namePhase"
+        app:layout_constraintEnd_toStartOf="@+id/valueNamePhase"
+        app:layout_constraintTop_toBottomOf="@+id/valueReadAntennas" />
+
+    <TextView
+        android:id="@+id/valueNamePhase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/NULL"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/valueReadAntennas" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/textNamePhase"
+        app:layout_constraintStart_toEndOf="@+id/valueNameSIMs"
+        app:layout_constraintTop_toBottomOf="@+id/valueReadAntennas" />
+
+    <Button
+        android:id="@+id/button10"
+        android:layout_width="158dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:onClick="newPhase"
+        android:text="@string/mapsRouteActivity_button_newPhase"
+        app:layout_constraintBottom_toTopOf="@+id/button8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNamePhase"
+        app:layout_constraintVertical_bias="0.578" />
+
+    <ListView
+        android:id="@+id/listViewMeasure"
+        android:layout_width="206dp"
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toTopOf="@+id/button9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNamePhase" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
