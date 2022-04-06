@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.location.Location;
 import android.os.Bundle;
 import android.telephony.CellInfo;
@@ -37,8 +38,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -49,7 +48,7 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     private int interval = 10000; //Permitimos al usuario especificar un intervalo de actualizaciones pero por defecto ponemos un intervalo de 10 segundos
     private int selectedSim = 0; //TODO Podemos permitir al usuario seleccionar en que SIM quiere realizar las lecturas si esque tiene más de una SIM
     // Por ejemplo entre 5 y 30 segundos
-    private TextView valueNameRoute, valueSelectedAntennas, valueReadAntennas, valueNamePhase, valueNameSIMs;
+    private TextView valueNameRoute, valueSelectedAntennas, valueReadAntennas, valueNamePhase, valueNameSIM;
 
     private MapView mMapView;
 
@@ -90,17 +89,17 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
             name = getIntent().getStringExtra("name");
             antenna = getIntent().getIntExtra("antennaSelected", 4);
             interval = getIntent().getIntExtra("interval", 10000);
-            selectedSim = getIntent().getIntExtra("selectedSim", 0);
+            selectedSim = getIntent().getIntExtra("selectedSim", 1);
         }
 
         valueNameRoute = findViewById(R.id.valueNameRoute);
         valueSelectedAntennas = findViewById(R.id.valueSelectedAntennas);
         valueReadAntennas = findViewById(R.id.valueReadAntennas);
         valueNamePhase = findViewById(R.id.valueNamePhase);
-        valueNameSIMs = findViewById(R.id.valueNameSIMs);
+        valueNameSIM = findViewById(R.id.valueNameSIMs);
 
         listMeasures = findViewById(R.id.listViewMeasure);
-        arrayLecturas = new ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        arrayLecturas = new ArrayAdapter<>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
 
 
         valueNameRoute.setText(name);
@@ -125,13 +124,24 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                     newUbication = true;
                 }
                 if (newUbication) {
-                    valueAntenna = readValueAntenna(selectedSim);
-                    String newLine = (String) ("Phase " + phase + ", " + antenna + "G: " + valueAntenna + " dbm");
-                    arrayLecturas.add(newLine);
-                    listMeasures.setAdapter(arrayLecturas);
-                    valueReadAntennas.setText(newLine);
-                    gM.addMarker(new MarkerOptions().position(new LatLng(locationActual.getLatitude(), locationActual.getLongitude())).title(newLine)).setIcon(obtenerTipoMarcador(valueAntenna, antenna));
-                    newUbication = false;
+                    valueAntenna = readValueAntenna(selectedSim,antenna);
+                    if(valueAntenna==0){
+                        valueReadAntennas.setTextColor(ColorStateList.valueOf(0xFFFF0000));
+                        valueReadAntennas.setText(R.string.mapsRoute_error_SIM);
+                        newUbication = false;
+                    }else if(valueAntenna==-200){
+                        valueReadAntennas.setTextColor(ColorStateList.valueOf(0xFFFF0000));
+                        valueReadAntennas.setText(R.string.mapsRoute_error_Antenna);
+                        newUbication = false;
+                    }else{
+                        valueReadAntennas.setTextColor(ColorStateList.valueOf(getResources().getColor(R.color.black)));
+                        String newLine = (String) ("Phase " + phase + ", " + antenna + "G: " + valueAntenna + " dbm");
+                        arrayLecturas.add(newLine);
+                        listMeasures.setAdapter(arrayLecturas);
+                        valueReadAntennas.setText(newLine);
+                        gM.addMarker(new MarkerOptions().position(new LatLng(locationActual.getLatitude(), locationActual.getLongitude())).title(newLine)).setIcon(obtenerTipoMarcador(valueAntenna, antenna));
+                        newUbication = false;
+                    }
                 }
             }
         };
@@ -164,7 +174,7 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     @SuppressLint("NewApi")
-    private int readValueAntenna(int selectedSim) {
+    private int readValueAntenna(int selectedSim, int antenna) {
 
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
@@ -173,54 +183,58 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 0);
         }
         List<CellInfo> cellInfos = telephonyManager.getAllCellInfo();   //Obtiene información sobre todas las SIMs del teléfono movil
-        String datosSims = "";
-        if(cellInfos!=null && selectedSim==0){
+        String datosSim = "";
+        if(cellInfos!=null){
             int strength = -200;
+            int registeredIndex = 0;
             for (int i = 0; i<cellInfos.size(); i++){
-                if (cellInfos.get(i).isRegistered()){
-                    if(cellInfos.get(i) instanceof CellInfoWcdma){
-                        CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) telephonyManager.getAllCellInfo().get(0);
+                if (cellInfos.get(i).isRegistered() && selectedSim==(registeredIndex+1)){
+                    if(antenna==3 && cellInfos.get(i) instanceof CellInfoWcdma){
+                        CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) telephonyManager.getAllCellInfo().get(i);
                         CellSignalStrengthWcdma cellSignalStrengthWcdma = cellInfoWcdma.getCellSignalStrength();
                         strength = cellSignalStrengthWcdma.getDbm();
-                        datosSims = datosSims + "\n" + cellInfoWcdma.getCellIdentity().getOperatorAlphaShort().toString();
-                    }else if(cellInfos.get(i) instanceof CellInfoGsm){
-                        CellInfoGsm cellInfogsm = (CellInfoGsm) telephonyManager.getAllCellInfo().get(0);
+                        datosSim = cellInfoWcdma.getCellIdentity().getOperatorAlphaShort().toString().toUpperCase();
+                    }else if(antenna==2 && cellInfos.get(i) instanceof CellInfoGsm){
+                        CellInfoGsm cellInfogsm = (CellInfoGsm) telephonyManager.getAllCellInfo().get(i);
                         CellSignalStrengthGsm cellSignalStrengthGsm = cellInfogsm.getCellSignalStrength();
                         strength = cellSignalStrengthGsm.getDbm();
-                        datosSims = datosSims + "\n" + cellInfogsm.getCellIdentity().getOperatorAlphaShort().toString();
-                    }else if(cellInfos.get(i) instanceof CellInfoLte){
-                        CellInfoLte cellInfoLte = (CellInfoLte) telephonyManager.getAllCellInfo().get(0);
+                        datosSim = cellInfogsm.getCellIdentity().getOperatorAlphaShort().toString().toUpperCase();
+                    }else if( antenna==4 && cellInfos.get(i) instanceof CellInfoLte){
+                        CellInfoLte cellInfoLte = (CellInfoLte) telephonyManager.getAllCellInfo().get(i);
                         CellSignalStrengthLte cellSignalStrengthLte = cellInfoLte.getCellSignalStrength();
                         strength = cellSignalStrengthLte.getDbm();
-                        datosSims = datosSims + "\n" + cellInfoLte.getCellIdentity().getOperatorAlphaShort().toString();
+                        datosSim = cellInfoLte.getCellIdentity().getOperatorAlphaShort().toString().toUpperCase();
                     }
-
+                    valueNameSIM.setText(datosSim);
+                    return strength;
+                }else if(cellInfos.get(i).isRegistered()){
+                    registeredIndex++;
                 }
             }
-            valueNameSIMs.setText(datosSims);
+
             return strength;
         }//En caso de que se haya seleccionado una tarjeta SIM solo leemos las señales de dicha targeta
-        else if(cellInfos!=null && cellInfos.get(selectedSim-1).isRegistered()){
+        /*else if(cellInfos!=null && cellInfos.get(selectedSim-1).isRegistered()){
             int strength = -200;
-            if(cellInfos.get(selectedSim-1) instanceof CellInfoWcdma){
+            if(antenna==3 && cellInfos.get(selectedSim-1) instanceof CellInfoWcdma){
                 CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) telephonyManager.getAllCellInfo().get(0);
                 CellSignalStrengthWcdma cellSignalStrengthWcdma = cellInfoWcdma.getCellSignalStrength();
                 strength = cellSignalStrengthWcdma.getDbm();
-                datosSims = datosSims + "\n" + cellInfoWcdma.getCellIdentity().getOperatorAlphaShort().toString();
-            }else if(cellInfos.get(selectedSim-1) instanceof CellInfoGsm){
+                datosSims = cellInfoWcdma.getCellIdentity().getOperatorAlphaShort().toString();
+            }else if(antenna==2 && cellInfos.get(selectedSim-1) instanceof CellInfoGsm){
                 CellInfoGsm cellInfogsm = (CellInfoGsm) telephonyManager.getAllCellInfo().get(0);
                 CellSignalStrengthGsm cellSignalStrengthGsm = cellInfogsm.getCellSignalStrength();
                 strength = cellSignalStrengthGsm.getDbm();
-                datosSims = datosSims + "\n" + cellInfogsm.getCellIdentity().getOperatorAlphaShort().toString();
-            }else if(cellInfos.get(selectedSim-1) instanceof CellInfoLte){
+                datosSims = cellInfogsm.getCellIdentity().getOperatorAlphaShort().toString();
+            }else if(antenna==4 && cellInfos.get(selectedSim-1) instanceof CellInfoLte){
                 CellInfoLte cellInfoLte = (CellInfoLte) telephonyManager.getAllCellInfo().get(0);
                 CellSignalStrengthLte cellSignalStrengthLte = cellInfoLte.getCellSignalStrength();
                 strength = cellSignalStrengthLte.getDbm();
-                datosSims = datosSims + "\n" + cellInfoLte.getCellIdentity().getOperatorAlphaShort().toString();
+                datosSims = cellInfoLte.getCellIdentity().getOperatorAlphaShort().toString().toUpperCase();
             }
             valueNameSIMs.setText(datosSims);
             return strength;
-        }
+        }*/
         return 0;
     }
 
@@ -242,9 +256,9 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
             int valorRealDBM = 120+valueAntenna;
             if (-90 <= valueAntenna) {
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-            } else if (-91 >= valueAntenna && -119 <= valueAntenna) {
+            } else if (-119 <= valueAntenna) {
                 return BitmapDescriptorFactory.defaultMarker(valorRealDBM*4);
-            } else if (-120 >= valueAntenna) {
+            } else {
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
             }
         } else if(antenna==3){
@@ -261,9 +275,9 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
             int valorRealDBM = 110+valueAntenna;
             if (-70 <= valueAntenna) {
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-            } else if (-71 >= valueAntenna && -109 <= valueAntenna) {
+            } else if (-109 <= valueAntenna) {
                 return BitmapDescriptorFactory.defaultMarker(valorRealDBM*3);
-            } else if (-110 >= valueAntenna) {
+            } else {
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
             }
         } else if(antenna==2){
@@ -281,9 +295,9 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
             int valorRealDBM = 120+valueAntenna;
             if (-80 <= valueAntenna) {
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-            } else if (-81 >= valueAntenna && -119 <= valueAntenna) {
+            } else if (-119 <= valueAntenna) {
                 return BitmapDescriptorFactory.defaultMarker(valorRealDBM*3);
-            } else if (-120 >= valueAntenna) {
+            } else {
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
             }
         }

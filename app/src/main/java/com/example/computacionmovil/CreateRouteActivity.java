@@ -1,15 +1,24 @@
 package com.example.computacionmovil;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
+import android.telephony.CellInfo;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import java.util.List;
 
 public class CreateRouteActivity extends AppCompatActivity {
 
@@ -39,9 +48,9 @@ public class CreateRouteActivity extends AppCompatActivity {
         checkBox3G = findViewById(R.id.createRouteAntenna3GCheck);
         checkBox4G = findViewById(R.id.createRouteAntenna4GCheck);
 
-        checkBox2G.setOnClickListener(checkboxListener);
-        checkBox3G.setOnClickListener(checkboxListener);
-        checkBox4G.setOnClickListener(checkboxListener);
+        checkBox2G.setOnClickListener(checkboxListenerAntenna);
+        checkBox3G.setOnClickListener(checkboxListenerAntenna);
+        checkBox4G.setOnClickListener(checkboxListenerAntenna);
 
         antennaError = findViewById(R.id.createRouteAntennaCheckError);
 
@@ -50,10 +59,28 @@ public class CreateRouteActivity extends AppCompatActivity {
 
         sim1 = findViewById(R.id.createRouteCheckBoxSIM1);
         sim2 = findViewById(R.id.createRouteCheckBoxSIM2);
+
+        sim1.setOnClickListener(checkboxListenerSIM);
+        sim2.setOnClickListener(checkboxListenerSIM);
+
         simError = findViewById(R.id.createRouteSimCheckError);
 
         findViewById(R.id.createRouteButtonCreate);
 
+        setNameSIMs();
+
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        setNameSIMs();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        setNameSIMs();
     }
 
     public void cancelMainActivity(View w){
@@ -88,7 +115,8 @@ public class CreateRouteActivity extends AppCompatActivity {
             interval.setBackgroundTintList(ColorStateList.valueOf(0xFF000000));
         }
 
-        //Comprobamos si existen errores para la/las SIMs seleccionadas
+        //TODO Con la nueva filosofía de solo leer de una tarjeta no tiene mucho sentido
+        // Comprobamos si existen errores para la/las SIMs seleccionadas
         if( !sim1.isChecked() && !sim2.isChecked() ){
             simError.setText(R.string.createRoute_error_SIM);
             errorSIM=true;
@@ -96,7 +124,7 @@ public class CreateRouteActivity extends AppCompatActivity {
             simError.setText("");
         }
 
-        if((errorName==false)&&(errorInterval==false)&&(errorSIM==false)){
+        if((!errorName)&&(!errorInterval)&&(errorSIM==false)){
             Intent intent=new Intent(this, MapsRoutesActivity.class);
 
             //Pasamos los parametros seleccionados en la creación de la ruta
@@ -118,7 +146,46 @@ public class CreateRouteActivity extends AppCompatActivity {
         }
     }
 
-    View.OnClickListener checkboxListener = new View.OnClickListener() {
+    private void setNameSIMs() {
+
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)&&(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 0);
+        }
+        List<CellInfo> cellInfos = telephonyManager.getAllCellInfo();   //Obtiene información sobre todas las SIMs del teléfono movil
+
+        if(cellInfos!=null){
+            int registeredIndex = 0;
+            for (int i = 0; i<cellInfos.size(); i++){
+                if (cellInfos.get(i).isRegistered()){
+                    registeredIndex++;
+                    if(registeredIndex==1){
+                        //Método solo válido para versiones altas de android
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            sim1.setText(cellInfos.get(i).getCellIdentity().getOperatorAlphaShort().toString().toUpperCase());
+                        }
+                    }else{
+                        //Método solo válido para versiones altas de android
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            sim2.setText(cellInfos.get(i).getCellIdentity().getOperatorAlphaShort().toString().toUpperCase());
+                        }
+                    }
+                }
+            }
+
+            if(registeredIndex>1){
+                findViewById(R.id.CreateRouteTittleSelectedSIM).setVisibility(View.VISIBLE);
+
+                sim1.setVisibility(View.VISIBLE);
+
+                sim2.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    View.OnClickListener checkboxListenerAntenna = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (v == checkBox4G){
@@ -139,5 +206,19 @@ public class CreateRouteActivity extends AppCompatActivity {
             }
         }
     };
+
+    View.OnClickListener checkboxListenerSIM = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v == sim1){
+                sim2.setChecked(false);
+                sim1.setChecked(true);
+            } else   if (v == sim2){
+                sim2.setChecked(true);
+                sim1.setChecked(false);
+            }
+        }
+    };
+
 
 }

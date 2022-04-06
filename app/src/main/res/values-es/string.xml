@@ -16,7 +16,7 @@
 
     <string name="createRoute_text_name">Nombre de recorrido</string>
     <string name="createRoute_textInput_name">Nombre</string>
-    <string name="createRoute_text_type">Tipos de antenas</string>
+    <string name="createRoute_text_type">Tipo de antena</string>
     <string name="createRoute_button_create">CREAR</string>
     <string name="createRoute_button_cancel">CANCELAR</string>
     <string name="createRoute_checkbox_4G">4G</string>

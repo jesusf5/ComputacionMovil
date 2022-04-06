@@ -23,8 +23,8 @@
     <string name="createRoute_checkbox_3G">3G</string>
     <string name="createRoute_checkbox_2G">2G</string>
     <string name="createRoute_tittle_interval" translatable="false">Select the update interval for measurements(seconds)</string>
-    <string name="createRoute_textInput_interval" translatable="false">10</string>
-    <string name="createRoute_tittle_selectSim" translatable="false">Select the SIM to do measurements</string>
+    <string name="createRoute_textInput_interval" translatable="false">5</string>
+    <string name="createRoute_tittle_selectSim" translatable="false">Two SIMs detected, select the SIM to do measurements</string>
     <string name="createRoute_checkbox_SIM1" translatable="false">SIM 1</string>
     <string name="createRoute_checkbox_SIM2" translatable="false">SIM 2</string>
 
@@ -46,5 +46,7 @@
     <string name="mapsRouteActivity_text_nameSIMs" translatable="false">SIMs names:</string>
     <string name="mapsRouteActivity_text_namePhase" translatable="false">Current phase: </string>
     <string name="mapsRouteActivity_text_titlePhase" translatable="false">Phase</string>
+    <string name="mapsRoute_error_SIM" translatable="false">Sim selected invalid or out of order</string>
+    <string name="mapsRoute_error_Antenna" translatable="false">The selected antenna is not operational for this SIM</string>
 
 </resources>
