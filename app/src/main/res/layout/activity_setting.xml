@@ -7,7 +7,7 @@
     tools:context=".SettingActivity">
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/main_Button_ActivityMaps"
         android:layout_width="158dp"
         android:layout_height="60dp"
         android:layout_marginEnd="20dp"
@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/button7"
+        android:id="@+id/loadRoute_Delete"
         android:layout_width="158dp"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"

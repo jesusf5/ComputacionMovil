@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,16 +16,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
-    /*public void openSecondActivity(View w){
-        long clickTime=System.currentTimeMillis();
-        Intent intent=new Intent(this, SecondActivity.class);
-        intent.putExtra("clickTime", clickTime);
-        startActivity(intent);
+        ((TextView)findViewById(R.id.main_Text_ValueTotalMeasurement)).setText(String.valueOf(Arrays.stream(Objects.requireNonNull(getApplicationContext().getExternalFilesDir("").listFiles())).count()));
     }
-    */
-
 
     public void openLocationActivity(View w){
         Intent intent=new Intent(this, LocationActivity.class);

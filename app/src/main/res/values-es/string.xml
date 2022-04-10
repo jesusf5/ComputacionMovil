@@ -23,7 +23,4 @@
     <string name="createRoute_checkbox_3G">3G</string>
     <string name="createRoute_checkbox_2G">2G</string>
 
-    <string name="loadRoute_button_cancel">CANCELAR</string>
-    <string name="loadRoute_button_load">CARGAR</string>
-
 </resources>

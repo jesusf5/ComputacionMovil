@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -53,6 +54,8 @@
         <activity android:name=".CreateRouteActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".MapsRoutesActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MapsLoadRouteActivity"
             android:screenOrientation="portrait"/>
     </application>
 

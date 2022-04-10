@@ -7,8 +7,8 @@
     tools:context=".LoadRouteActivity">
 
     <Button
-        android:id="@+id/button3"
-        android:layout_width="158dp"
+        android:id="@+id/main_Button_ActivityMaps"
+        android:layout_width="100dp"
         android:layout_height="60dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
@@ -18,14 +18,53 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/button7"
-        android:layout_width="158dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="20dp"
+        android:id="@+id/loadRoute_Delete"
+        android:layout_width="100sp"
+        android:layout_height="60sp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="20dp"
-        android:onClick="cancelMainActivity"
+        android:onClick="deleteLoadRoute"
         android:text="@string/loadRoute_button_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/main_Button_ActivityMaps"
+        app:layout_constraintStart_toEndOf="@+id/loadRoute_Exit" />
+
+    <ListView
+        android:id="@+id/loadRoute_ListRoutes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contextClickable="true"
+        android:drawSelectorOnTop="true"
+        android:listSelector="@drawable/selecteditem"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/loadRoute_ErrorText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+    </ListView>
+
+    <Button
+        android:id="@+id/loadRoute_Exit"
+        android:layout_width="100sp"
+        android:layout_height="60sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:onClick="exitLoadRoute"
+        android:text="@string/loadRoute_button_exit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/loadRoute_ErrorText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#FF0000"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/loadRoute_Delete"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
