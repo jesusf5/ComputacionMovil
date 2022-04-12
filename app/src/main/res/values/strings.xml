@@ -46,7 +46,7 @@
     <string name="mapsRouteActivity_button_newStage" translatable="false">NEW STAGE</string>
     <string name="mapsRouteActivity_text_nameRoute" translatable="false">Name route: </string>
     <string name="mapsRouteActivity_text_selectedAntennas" translatable="false">Selected antenna: </string>
-    <string name="mapsRouteActivity_text_nameSIMs" translatable="false">SIMs names: </string>
+    <string name="mapsRouteActivity_text_nameSIMs" translatable="false">SIMS names: </string>
     <string name="mapsRouteActivity_text_nameStage" translatable="false">Current stage: </string>
     <string name="mapsRouteActivity_text_titleStage" translatable="false">Stage</string>
     <string name="mapsRoute_error_SIM" translatable="false">Sim selected invalid or out of order</string>
