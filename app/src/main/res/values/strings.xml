@@ -53,6 +53,9 @@
     <string name="mapsRoute_error_Antenna" translatable="false">The selected antenna is not operational for this SIM</string>
     <string name="mapsRoute_error_limitMeasurement" translatable="false">Maximum number of measurements reached</string>
 
+    <string name="mapsActivity_map" translatable="false">Maps</string>
+    <string name="mapsActivity_button_save" translatable="false">SAVE</string>
+
     <string name="medida_textDescription1" translatable="false">Stage </string>
     <string name="medida_textDescription2" translatable="false">, antenna </string>
     <string name="medida_textDescription3" translatable="false">, position </string>
