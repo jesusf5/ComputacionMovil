@@ -88,19 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         CellsPosition service = retrofit.create(CellsPosition.class);
         Call<CellsPositionRes> call = service.listLocation(1.1, "open", 250, 2, 7840, 200719106);
-        Log.d("jsonObjectCall", String.valueOf(call));
-        /*
-        Prueba1
-        try {
-            Response<JSONObject> response = jsonObjectCall.execute();
-            JSONObject mainObject = response.body();
-            Log.d("mainObject", String.valueOf(response));
-            TextView texto = findViewById(R.id.textViewXD);
-            texto.setText(jsonObjectCall.toString());
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        */
+        Log.d("call", String.valueOf(call));
 
         call.enqueue(new Callback<CellsPositionRes>() {
             TextView texto = findViewById(R.id.textViewXD);
