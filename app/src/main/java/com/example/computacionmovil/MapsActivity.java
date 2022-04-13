@@ -15,6 +15,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.computacionmovil.databinding.ActivityMapsBinding;
 
+import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -51,6 +57,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //LatLng sydney = new LatLng(-34, 151);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        //mostrarAntenas();
     }
 
     private void startShowingLocation(){
@@ -61,5 +69,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             mMap.setMyLocationEnabled(true);
         }
+    }
+
+    private void mostrarAntenas(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.mylnikov.org/geolocation/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        CellsPosition service = retrofit.create(CellsPosition.class);
+        Call<JSONObject> jsonObjectCall = service.listLocation(1.1, "open", 250, 2, 7840, 200719106);
     }
 }
