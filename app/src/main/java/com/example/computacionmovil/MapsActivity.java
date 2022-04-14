@@ -3,8 +3,18 @@ package com.example.computacionmovil;
 import static android.content.ContentValues.TAG;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.CellInfo;
+import android.telephony.CellInfoGsm;
+import android.telephony.CellInfoLte;
+import android.telephony.CellInfoWcdma;
+import android.telephony.CellSignalStrengthGsm;
+import android.telephony.CellSignalStrengthLte;
+import android.telephony.CellSignalStrengthWcdma;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -13,14 +23,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.computacionmovil.databinding.ActivityMapsBinding;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -87,7 +102,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .build();
 
         CellsPosition service = retrofit.create(CellsPosition.class);
-        Call<CellsPositionRes> call = service.listLocation(1.1, "open", 250, 2, 7840, 200719106);
+
+        //OBTENEMOS VALORES DE LOS PARAMETROS
+        List<Integer> parametros = getParameters();
+        //
+
+        Call<CellsPositionRes> call = service.listLocation(1.1, "open", parametros.get(0), parametros.get(1), parametros.get(2), parametros.get(3));
         Log.d("call", String.valueOf(call));
 
         call.enqueue(new Callback<CellsPositionRes>() {
@@ -98,7 +118,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.i(TAG, "Error" + response.code());
                 } else {
                     CellsPositionRes cellsPositions = response.body();
-                    texto.setText(cellsPositions.getData().toString());
+                    texto.setText(cellsPositions.getData().toString()+"mcc: " + parametros.get(0)+", mnc: " + parametros.get(1)+ ", cellid: " + parametros.get(2)+ ", lac: " + parametros.get(3));
+                    LatLng murcia = new LatLng(cellsPositions.getData().getLat(), cellsPositions.getData().getLon());
+                    gM.addMarker(new MarkerOptions().position(murcia).title("Primera marca"));
+                    //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+                    gM.moveCamera(CameraUpdateFactory.newLatLng(murcia));
                 }
             }
 
@@ -107,6 +131,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.e("error", t.toString());
             }
         });
+    }
+
+    private List<Integer> getParameters() {
+
+        //Declaramos el manager para solicitarle información sobre el servicio de telefonía
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+        //Comprobamos los permisos necesarios y en caso de no tenerlos, los solicitamos
+        //TODO REVISAR POR A VECES HACE COSAS RARAS AL PEDIR LOS PERMISOS LA PRIMERA VEZ
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }else  if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 0);
+        }
+
+        String networkOperator = telephonyManager.getNetworkOperator();
+        int mcc = 0, mnc = 0;
+        if (networkOperator != null) {
+            mcc = Integer.parseInt(networkOperator.substring(0, 3));
+            mnc = Integer.parseInt(networkOperator.substring(3));
+        }
+
+        final GsmCellLocation location = (GsmCellLocation) telephonyManager.getCellLocation();
+        int lac = 0, cellid = 0;
+        if (location != null) {
+            lac = location.getLac();
+            cellid = location.getCid();
+        }
+
+        List<Integer> parametros = new LinkedList<>();
+        parametros.add(mcc);
+        parametros.add(mnc);
+        parametros.add(lac);
+        parametros.add(cellid);
+        return parametros;
     }
 
     @Override

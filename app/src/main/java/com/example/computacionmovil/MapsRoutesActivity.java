@@ -1,5 +1,7 @@
 package com.example.computacionmovil;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +17,7 @@ import android.telephony.CellSignalStrengthGsm;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -29,6 +32,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,6 +44,12 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -78,6 +88,10 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     //TODO De momento esta establecido un límite de 100 mediciones
     Medida[] arrayDeMedidas = new Medida[100];
     private int nMedidas = 0;
+
+    //Parametros para torre telefonia
+    private int lac, cellid = 0;
+    private String mcc, mnc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,8 +172,12 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                     listMeasures.setAdapter(arrayLecturas);
                     valueReadAntennas.setText(newLine);
 
+                    //Retrofit para enviar a la API una solicitud con los parametros obtenidos
+                    mostrarTorresTelefonia();
+
                     //Establecemos un marcador en la posición desde la que se ha realizado la lectura con la imagen y color correspondiente segun el valor leido y la antena seleccionada
                     Objects.requireNonNull(gM.addMarker(new MarkerOptions().position(new LatLng(locationActual.getLatitude(), locationActual.getLongitude())).title(newLine))).setIcon(Auxiliar.obtenerTipoMarcador(valueAntenna, antenna));
+
                 }
             }
         };
@@ -212,16 +230,33 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                         CellSignalStrengthGsm cellSignalStrengthGsm = cellInfogsm.getCellSignalStrength();
                         strength = cellSignalStrengthGsm.getDbm();
                         valueNameSIM.setText(cellInfogsm.getCellIdentity().getOperatorAlphaShort().toString().toUpperCase());
+                        mcc = cellInfogsm.getCellIdentity().getMccString();
+                        mnc = cellInfogsm.getCellIdentity().getMncString();
+                        lac = cellInfogsm.getCellIdentity().getLac();
+                        cellid = cellInfogsm.getCellIdentity().getCid();
+                        Log.d("Soy Gsm", "Soy gsm");
+                        Log.d("mcc", mcc);
+                        Log.d("mnc", mnc);
+                        Log.d("cellid", String.valueOf(cellid));
+                        Log.d("lac", String.valueOf(lac));
                     }else if(antenna==3 && cellInfos.get(i) instanceof CellInfoWcdma){
                         CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) telephonyManager.getAllCellInfo().get(i);
                         CellSignalStrengthWcdma cellSignalStrengthWcdma = cellInfoWcdma.getCellSignalStrength();
                         strength = cellSignalStrengthWcdma.getDbm();
                         valueNameSIM.setText(cellInfoWcdma.getCellIdentity().getOperatorAlphaShort().toString().toUpperCase());
+                        mcc = cellInfoWcdma.getCellIdentity().getMccString();
+                        mnc = cellInfoWcdma.getCellIdentity().getMncString();
+                        lac = cellInfoWcdma.getCellIdentity().getLac();
+                        cellid = cellInfoWcdma.getCellIdentity().getCid();
                     }else if( antenna==4 && cellInfos.get(i) instanceof CellInfoLte){
                         CellInfoLte cellInfoLte = (CellInfoLte) telephonyManager.getAllCellInfo().get(i);
                         CellSignalStrengthLte cellSignalStrengthLte = cellInfoLte.getCellSignalStrength();
                         strength = cellSignalStrengthLte.getDbm();
                         valueNameSIM.setText(cellInfoLte.getCellIdentity().getOperatorAlphaShort().toString().toUpperCase());
+                        mcc = cellInfoLte.getCellIdentity().getMccString();
+                        mnc = cellInfoLte.getCellIdentity().getMncString();
+                        lac = cellInfoLte.getCellIdentity().getTac();
+                        cellid = cellInfoLte.getCellIdentity().getCi();
                     }
                     return strength;
                 }else if(cellInfos.get(i).isRegistered()){
@@ -242,6 +277,39 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
         } else {
             gM.setMyLocationEnabled(true);
         }
+    }
+
+    private void mostrarTorresTelefonia() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.mylnikov.org/geolocation/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        CellsPosition service = retrofit.create(CellsPosition.class);
+
+        Call<CellsPositionRes> call = service.listLocation(1.1, "open", Integer.parseInt(mcc), Integer.parseInt(mnc), lac, cellid);
+
+        call.enqueue(new Callback<CellsPositionRes>() {
+            @Override
+            public void onResponse(Call<CellsPositionRes> call, Response<CellsPositionRes> response) {
+                if (!response.isSuccessful()) {
+                    Log.i(TAG, "Error" + response.code());
+                } else {
+                    CellsPositionRes cellsPositions = response.body();
+                    Log.d("Resultado latitud: ", String.valueOf(cellsPositions.getData().getLat()));
+                    Log.d("Resultado longitud: ", String.valueOf(cellsPositions.getData().getLon()));
+
+                    LatLng murcia = new LatLng(cellsPositions.getData().getLat(), cellsPositions.getData().getLon());
+                    gM.addMarker(new MarkerOptions().position(murcia).title("Marca torre telefonia"));
+                    gM.moveCamera(CameraUpdateFactory.newLatLng(murcia));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CellsPositionRes> call, Throwable t) {
+                Log.e("error", t.toString());
+            }
+        });
     }
 
     @Override
