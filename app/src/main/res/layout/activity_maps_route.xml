@@ -7,7 +7,7 @@
     tools:context=".MapsRoutesActivity">
 
     <Button
-        android:id="@+id/button8"
+        android:id="@+id/LoadRouteMaps_Button_Exite"
         android:layout_width="158dp"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
@@ -123,11 +123,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/mapsRouteActivity_text_nameStage"
-        app:layout_constraintEnd_toStartOf="@+id/mapsRoute_Text_ValueNamePhase"
+        app:layout_constraintEnd_toStartOf="@+id/mapsRoute_Text_ValueNameStage"
         app:layout_constraintTop_toBottomOf="@+id/mapsRoute_Text_ValueReadAntennas" />
 
     <TextView
-        android:id="@+id/mapsRoute_Text_ValueNamePhase"
+        android:id="@+id/mapsRoute_Text_ValueNameStage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -153,13 +153,13 @@
         android:layout_marginTop="5dp"
         android:onClick="newStage"
         android:text="@string/mapsRouteActivity_button_newStage"
-        app:layout_constraintBottom_toTopOf="@+id/button8"
+        app:layout_constraintBottom_toTopOf="@+id/LoadRouteMaps_Button_Exite"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textNamePhase"
         app:layout_constraintVertical_bias="0.578" />
 
     <ListView
-        android:id="@+id/mapsRoute_Text_listViewMeasure"
+        android:id="@+id/LoadRouteData_Text_listViewStages"
         android:layout_width="206dp"
         android:layout_height="80dp"
         app:layout_constraintBottom_toTopOf="@+id/button9"

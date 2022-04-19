@@ -58,11 +58,9 @@
         android:id="@+id/main_Text_TittleTotalKilometers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
-        android:text="@string/main_tittle_total_km"
-        app:layout_constraintEnd_toStartOf="@+id/main_Text_ValueTotalKilometers"
-        app:layout_constraintHorizontal_bias="0.266"
+        android:text="@string/main_tittle_total_m"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,46 +68,34 @@
         android:id="@+id/main_Text_TittleTotalMeasurement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="20dp"
         android:text="@string/main_tittle_total_medition"
-        app:layout_constraintEnd_toStartOf="@+id/main_Button_Setting"
-        app:layout_constraintHorizontal_bias="0.688"
-        app:layout_constraintStart_toEndOf="@+id/main_Text_ValueTotalMeasurement"
-        app:layout_constraintTop_toBottomOf="@+id/main_Text_ValueTotalKilometers" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_Text_TittleTotalKilometers" />
 
     <TextView
-        android:id="@+id/main_Text_ValueTotalKilometers"
-        android:layout_width="71dp"
+        android:id="@+id/main_Text_ValueTotalMeters"
+        android:layout_width="wrap_content"
         android:layout_height="18dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="30dp"
         android:text="@string/NULL"
-        app:layout_constraintEnd_toStartOf="@+id/main_Button_Setting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/main_Text_TittleTotalKilometers"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/main_Text_ValueTotalMeasurement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="68dp"
         android:text="@string/NULL"
         app:layout_constraintBottom_toTopOf="@+id/main_Button_LoadRoutes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_Text_TittleTotalKilometers"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/main_Button_Setting"
-        android:layout_width="70dp"
-        android:layout_height="74dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:onClick="openSettingActivity"
-        app:icon="@android:drawable/ic_menu_manage"
-        app:iconTint="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/main_button_conf" />
+        app:layout_constraintStart_toEndOf="@+id/main_Text_TittleTotalMeasurement"
+        app:layout_constraintTop_toBottomOf="@+id/main_Text_ValueTotalMeters" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

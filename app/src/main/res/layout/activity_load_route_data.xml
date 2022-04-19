@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/LoadRouteData_Text_Data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:gravity="center"
+        android:text="@string/loadRouteData_text_textDefect"
+        app:layout_constraintBottom_toTopOf="@+id/LoadRouteData_Button_Exit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ListView
+        android:id="@+id/LoadRouteData_Text_listViewStages"
+        android:layout_width="400dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:foregroundGravity="center"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/LoadRouteData_BarChart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/LoadRouteData_BarChart"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/LoadRouteData_Text_Data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </com.github.mikephil.charting.charts.BarChart>
+
+    <Button
+        android:id="@+id/LoadRouteData_Button_Return"
+        android:layout_width="168dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:onClick="volver"
+        android:text="@string/loadRouteData_button_Return"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/LoadRouteData_Button_Exit"
+        android:layout_width="158dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:onClick="salir"
+        android:text="@string/loadRouteData_button_exit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

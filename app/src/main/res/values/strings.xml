@@ -1,10 +1,11 @@
 <resources>
-    <string name="app_name">Computacion Movil</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="app_name" translatable="false">Computacion Movil</string>
+    <string name="title_activity_maps" translatable="false">MapsActivity</string>
     <string name="NULL" translatable="false">NULL</string>
+    <string name="fileDistances" translatable="false">distances.txt</string>
 
-    <string name="main_tittle_total_km">Total kilometers traveled: </string>
-    <string name="main_tittle_total_medition">: Total measurements made</string>
+    <string name="main_tittle_total_m">Total meters traveled -> </string>
+    <string name="main_tittle_total_medition">Total measurements made -> </string>
     <string name="main_button_loadSaved">LOAD ROUTES</string>
     <string name="main_button_activityLocation">ACTIVITY LOCATION</string>
     <string name="main_button_activityMaps">ACTIVITY MAPS</string>
@@ -12,7 +13,7 @@
     <string name="main_button_conf">Conf</string>
 
     <string name="setting_button_save">SAVE</string>
-    <string name="setting_button_cancel">@android:string/cancel</string>
+    <string name="setting_button_cancel">CANCEL</string>
 
     <string name="createRoute_text_name">Route name</string>
     <string name="createRoute_textInput_name">Name</string>
@@ -22,43 +23,59 @@
     <string name="createRoute_checkbox_4G">4G</string>
     <string name="createRoute_checkbox_3G">3G</string>
     <string name="createRoute_checkbox_2G">2G</string>
-    <string name="createRoute_tittle_interval" translatable="false">Select the update interval for measurements(seconds)</string>
+    <string name="createRoute_tittle_interval">Select the update interval for measurements(meters)</string>
     <string name="createRoute_textInput_interval" translatable="false">5</string>
-    <string name="createRoute_tittle_selectSim" translatable="false">Two SIMs detected, select the SIM to do measurements</string>
+    <string name="createRoute_tittle_selectSim">Two SIMs detected, select the SIM to do measurements</string>
     <string name="createRoute_checkbox_SIM1" translatable="false">SIM 1</string>
     <string name="createRoute_checkbox_SIM2" translatable="false">SIM 2</string>
 
-    <string name="createRoute_error_name" translatable="false">The name cannot be empty</string>
-    <string name="createRoute_error_nameRepeat" translatable="false">Repeated name</string>
-    <string name="createRoute_error_interval" translatable="false">The interval in seconds must be between 5 and 30 seconds</string>
-    <string name="createRoute_error_antenna" translatable="false">ANTENNA ERROR</string>
-    <string name="createRoute_error_SIM" translatable="false">At least one SIM must be selected</string>
+    <string name="createRoute_error_name">The name cannot be empty</string>
+    <string name="createRoute_error_nameRepeat">Repeated name</string>
+    <string name="createRoute_error_interval">The interval in meters must be between 5 and 100 meters</string>
+    <string name="createRoute_error_antenna">ANTENNA ERROR</string>
+    <string name="createRoute_error_SIM">At least one SIM must be selected</string>
 
-    <string name="loadRoute_button_exit" translatable="false">EXIT</string>
-    <string name="loadRoute_button_cancel" translatable="false">DELETE</string>
-    <string name="loadRoute_button_load" translatable="false">LOAD</string>
-    <string name="loadRoute_text_errorLoad" translatable="false">Could not load because there is no selected item</string>
-    <string name="loadRoute_text_errorDelete" translatable="false">The item could not be deleted because there is no item selected</string>
+    <string name="loadRoute_button_exit">EXIT</string>
+    <string name="loadRoute_button_cancel">DELETE</string>
+    <string name="loadRoute_button_load">LOAD</string>
+    <string name="loadRoute_text_errorLoad">Could not load because there is no selected item</string>
+    <string name="loadRoute_text_errorDelete">The item could not be deleted because there is no item selected</string>
 
     <string name="mapsRouteActivity_map" translatable="false">Maps</string>
-    <string name="mapsRouteActivity_button_exit" translatable="false">EXIT</string>
-    <string name="mapsRouteActivity_button_save" translatable="false">SAVE</string>
-    <string name="mapsRouteActivity_button_newStage" translatable="false">NEW STAGE</string>
-    <string name="mapsRouteActivity_text_nameRoute" translatable="false">Name route: </string>
-    <string name="mapsRouteActivity_text_selectedAntennas" translatable="false">Selected antenna: </string>
-    <string name="mapsRouteActivity_text_nameSIMs" translatable="false">SIMs names: </string>
-    <string name="mapsRouteActivity_text_nameStage" translatable="false">Current stage: </string>
-    <string name="mapsRouteActivity_text_titleStage" translatable="false">Stage</string>
-    <string name="mapsRoute_error_SIM" translatable="false">Sim selected invalid or out of order</string>
-    <string name="mapsRoute_error_Antenna" translatable="false">The selected antenna is not operational for this SIM</string>
-    <string name="mapsRoute_error_limitMeasurement" translatable="false">Maximum number of measurements reached</string>
+    <string name="mapsRouteActivity_button_exit">EXIT</string>
+    <string name="mapsRouteActivity_button_save">SAVE</string>
+    <string name="mapsRouteActivity_button_newStage">NEW STAGE</string>
+    <string name="mapsRouteActivity_text_nameRoute">Name route: </string>
+    <string name="mapsRouteActivity_text_selectedAntennas">Selected antenna: </string>
+    <string name="mapsRouteActivity_text_nameSIMs">SIM name: </string>
+    <string name="mapsRouteActivity_text_nameStage">Current stage: </string>
+    <string name="mapsRouteActivity_text_titleStage">Stage</string>
+    <string name="mapsRoute_text_Tower">Telephone tower</string>
+    <string name="mapsRoute_error_SIM">Sim selected invalid or out of order</string>
+    <string name="mapsRoute_error_Stage">It is not possible to change stages if there are no measurements recorded for the current stage</string>
+    <string name="mapsRoute_error_Antenna">The selected antenna is not operational for this SIM</string>
+    <string name="mapsRoute_error_limitMeasurement">Maximum number of measurements reached</string>
+    <string name="mapsRoute_error_intervalDistance">Waiting at specified distance</string>
 
     <string name="mapsActivity_map" translatable="false">Maps</string>
-    <string name="mapsActivity_button_save" translatable="false">SAVE</string>
+    <string name="mapsActivity_button_save">SAVE</string>
 
-    <string name="medida_textDescription1" translatable="false">Stage </string>
-    <string name="medida_textDescription2" translatable="false">, antenna </string>
-    <string name="medida_textDescription3" translatable="false">, position </string>
-    <string name="medida_textDescription4" translatable="false">, coverage </string>
+    <string name="medida_textDescription1">Stage </string>
+    <string name="medida_textDescription2">, antenna </string>
+    <string name="medida_textDescription3">, position </string>
+    <string name="medida_textDescription4">, coverage </string>
+
+    <string name="loadRouteMaps_button_exit" translatable="false">EXIT</string>
+    <string name="loadRouteMaps_button_MoreData" translatable="false">MORE DATA</string>
+
+    <string name="loadRouteData_button_exit">EXIT</string>
+    <string name="loadRouteData_button_Return">RETURN</string>
+    <string name="loadRouteData_text_DescriptionList">Stage</string>
+    <string name="loadRouteData_text_Description1">Stage number -> </string>
+    <string name="loadRouteData_text_Description2">Measured minimum -> </string>
+    <string name="loadRouteData_text_Description3">Measured maximum -> </string>
+    <string name="loadRouteData_text_Description4">Measurements -> </string>
+    <string name="loadRouteData_text_Description5">Average measurements -> </string>
+    <string name="loadRouteData_text_textDefect">Select one item</string>
 
 </resources>

@@ -55,7 +55,7 @@ public class LoadRouteActivity extends AppCompatActivity {
         arrayRoutes = new ArrayAdapter<>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         assert files != null;
         for(File f : files){
-            arrayRoutes.add(f.getName());
+            if(!f.getName().equals("distances.txt")) arrayRoutes.add(f.getName());
         }
         listRoutes.setAdapter(arrayRoutes);
 

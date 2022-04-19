@@ -3,6 +3,7 @@ package com.example.computacionmovil;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +23,18 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.Objects;
 
 public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapReadyCallback {
     //Declaramos un array que contendrá todas las medidas de la ruta cargada
-    private Medida[] arrayMedidas;
+    private Etapa[] arrayEtapas;
 
     //Variable con el nombre de la ruta cargada
     private String name;
@@ -73,13 +77,13 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
 
         //Obtenemos las medidas para la ruta seleccionada
         try {
-            arrayMedidas = StorageHelper.readMedidasFromFile(name,getApplicationContext());
+            arrayEtapas = StorageHelper.readEtapasFromFile(name,getApplicationContext());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         //Inicializamos la lista con los valores del las medidas
-        listMeasures =findViewById(R.id.mapsRoute_Text_listViewMeasure);
+        listMeasures =findViewById(R.id.LoadRouteData_Text_listViewStages);
         arrayLecturas = new ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -90,10 +94,14 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
         };
 
 
-        for (Medida m : arrayMedidas){
-            if(m!=null){
-                String text = getApplicationContext().getString(R.string.medida_textDescription1) + " " + m.getEtapa() + " " + getApplicationContext().getString(R.string.medida_textDescription2) + " " +  m.getAntena() + "G " + getApplicationContext().getString(R.string.medida_textDescription4) + " " + m.getDbm() + "dbm" + getApplicationContext().getString(R.string.medida_textDescription3) + " (" + m.getLatitud() + "," + m.getLongitud() + ") " + "\n\n";
-                arrayLecturas.add(text);
+        for (Etapa e : arrayEtapas){
+            if(e!=null){
+                for(Medida m : e.getMedidasEtapa()){
+                    if(m!=null) {
+                        String text = getApplicationContext().getString(R.string.medida_textDescription1) + " " + m.getEtapa() + " " + getApplicationContext().getString(R.string.medida_textDescription2) + " " + m.getAntena() + "G " + getApplicationContext().getString(R.string.medida_textDescription4) + " " + m.getDbm() + "dbm" + getApplicationContext().getString(R.string.medida_textDescription3) + " (" + m.getLatitud() + "," + m.getLongitud() + ") " + "\n\n";
+                        arrayLecturas.add(text);
+                    }
+                }
             }
         }
 
@@ -122,14 +130,31 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        Medida medidaAnterior = null;
+
         gM = googleMap;
         startShowingLocation();
-
+        //TODO DIBUJAR LAS LÍNEAS DE LAS DISTINTAS ETAPAS
         //En cuanto el mapa este listo, establecemos los marcadores de todas las mediciones realizadas
-        for (Medida m : arrayMedidas){
-            if(m!=null){
-                String text = getApplicationContext().getString(R.string.medida_textDescription1) + " " + m.getEtapa() + " " + getApplicationContext().getString(R.string.medida_textDescription2) + " " +  m.getAntena() + "G " + getApplicationContext().getString(R.string.medida_textDescription4) + " " + m.getDbm() + "dbm\n\n";
-                Objects.requireNonNull(gM.addMarker(new MarkerOptions().position(new LatLng(m.getLatitud(), m.getLongitud())).title(text))).setIcon(Auxiliar.obtenerTipoMarcador(m.getDbm(), m.getAntena()));
+        for (Etapa e : arrayEtapas){
+            if(e!=null){
+                for(Medida m : e.getMedidasEtapa()){
+                    if(m!=null) {
+                        String text = getApplicationContext().getString(R.string.medida_textDescription1) + " " + m.getEtapa() + " " + getApplicationContext().getString(R.string.medida_textDescription2) + " " +  m.getAntena() + "G " + getApplicationContext().getString(R.string.medida_textDescription4) + " " + m.getDbm() + "dbm\n\n";
+                        Objects.requireNonNull(gM.addMarker(new MarkerOptions().position(new LatLng(m.getLatitud(), m.getLongitud())).title(text))).setIcon(BitmapDescriptorFactory.defaultMarker(Auxiliar.obtenerTipoMarcador(m.getDbm(), m.getAntena())));
+
+                        //Añadimos una línea entre los dos puntos para conocer el recorrido que hemos hecho
+                        if(medidaAnterior!=null){
+                            Polyline line = gM.addPolyline(new PolylineOptions()
+                                    .add(new LatLng(medidaAnterior.getLatitud(), medidaAnterior.getLongitud()), new LatLng(m.getLatitud(), m.getLongitud()))
+                                    .width(5)
+                                    .color(Auxiliar.getColorStage(m.getEtapa())));
+                        }
+
+                        medidaAnterior = m;
+
+                    }
+                }
             }
         }
     }
@@ -160,6 +185,16 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
         startActivity(intent);
     }
 
+    public void moreData(View w){
+        Intent intent=new Intent(this, LoadRouteDataActivity.class);
+
+        //Pasamos los parametros seleccionados en la carga de la ruta(En nuestro caso solo el nombre del fichero)
+        Bundle b = new Bundle();
+        b.putString("name", name);
+        intent.putExtras(b);
+
+        startActivity(intent);
+    }
 
     @Override
     public void onResume() {

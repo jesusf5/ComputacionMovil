@@ -1,6 +1,7 @@
 package com.example.computacionmovil;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -86,6 +87,65 @@ public class StorageHelper {
         //Devolvemos el array con todas las mediciones de la ruta asociada a este fichero
         return arrayMedidas;
     }
+
+    //Lectura de medidas desde un fichero JSON
+    public static Etapa[] readEtapasFromFile(String filename, Context context) throws IOException {
+        int nEtapa = 0;
+        Etapa[] arrayEtapas;
+
+        // Leemos el contenido de la Ruta seleccionada en su fichero
+        String content = readStringFromFile(filename, context);
+
+        // Contamos el número de etapas que hay para saber el tamaño del array que debemos reservar
+        // Como sabemos que cada etapa tiene la forma:
+        //         {"maxMedidaEtapa":-95,"medMedidaEtapa":-95,"minMedidaEtapa":-95,"nEtapa":1,"nMedidasEtapa":1,"medidas":[{"antena":4,"dbm":-95,"etapa":1,"latitud":37.6813364,"longitud":-1.6890507}]}
+        // Simplemente contamos el número de veces que aparece la palabra nEtapa
+        Pattern nEtapaPattern = Pattern.compile("nEtapa");
+        Matcher nEtapaMatcher = nEtapaPattern.matcher(content);
+        while(nEtapaMatcher.find()){
+            nEtapa++;
+        }
+        arrayEtapas = new Etapa[nEtapa];
+
+        //TODO SEGURO QUE NO SE ESTA COGIENDO BIEN LAS MEDIDAS
+        Pattern p = Pattern.compile("\"maxMedidaEtapa\":(-?(\\d+)(\\.\\d+)?),\"medMedidaEtapa\":((-?\\d+)(\\.\\d+)?),\"minMedidaEtapa\":(-?(\\d+)(\\.\\d+)?),\"nEtapa\":((\\d+)(\\.\\d+)?),\"nMedidasEtapa\":((\\d+)(\\.\\d+)?),\"medidas\":([^\\]]*)?");
+        Matcher m = p.matcher(content);
+
+        int countActualEtapa = 0;
+        //Sabiendo el número de etapas pasamos a recorrer cada una de las etapas y a obtener sus medidas
+        while(m.find()) {
+            int nMedidas = 0;
+            Medida[] arrayMedidasEtapa;
+
+
+            // Contamos el número de mediciones que hay para saber el tamaño del array que debemos reservar
+            // Como sabemos que cada medición tiene la forma:
+            //         {"antena":3,"dbm":-67,"etapa":1,"latitud":37.6813219,"longitud":-1.6890355}
+            // Simplemente contamos el número de veces que aparece alguna de las palabras
+            Pattern nMedidasPattern = Pattern.compile("antena");
+            Matcher nMedidasMatcher = nMedidasPattern.matcher(m.group(16));
+            Log.d("Contenido del ultimo grupo", m.group(16));
+            while (nMedidasMatcher.find()) {
+                nMedidas++;
+            }
+            arrayMedidasEtapa = new Medida[nMedidas];
+
+            //Una vez tenemos el  array pasamos a recorrer todas las medidas del fichero y almacenarlas en nuestro array
+            Pattern p2 = Pattern.compile("\"antena\":((\\d+)(\\.\\d+)?),\"dbm\":((-\\d+)(\\.\\d+)?),\"etapa\":((\\d+)(\\.\\d+)?),\"latitud\":(-?\\d+(\\.\\d+)?),\"longitud\":(-?\\d+(\\.\\d+)?)");
+            Matcher m2 = p2.matcher(m.group(16));
+            int countActualMedida = 0;
+            while (m2.find()) {
+                arrayMedidasEtapa[countActualMedida] = new Medida(context.getApplicationContext(), Integer.valueOf(Objects.requireNonNull(m2.group(8))), Double.valueOf(Objects.requireNonNull(m2.group(12))), Double.valueOf(Objects.requireNonNull(m2.group(10))), Integer.valueOf(Objects.requireNonNull(m2.group(2))), Integer.valueOf(Objects.requireNonNull(m2.group(5))));
+                countActualMedida++;
+            }
+
+            arrayEtapas[countActualEtapa] = new Etapa(context.getApplicationContext(), Integer.valueOf(Objects.requireNonNull(m.group(11))), Integer.valueOf(Objects.requireNonNull(m.group(7))), Integer.valueOf(Objects.requireNonNull(m.group(4))), Integer.valueOf(Objects.requireNonNull(m.group(1))), Integer.valueOf(Objects.requireNonNull(m.group(14))),arrayMedidasEtapa);
+            countActualEtapa++;
+        }
+        //Devolvemos el array con todas las mediciones de la ruta asociada a este fichero
+        return arrayEtapas;
+    }
+
 
     static boolean eliminarFichero(String name, Context context){
         //Eliminamos el fichero pasado como parámetro

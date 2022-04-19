@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Computacion Movil</string>
-    <string name="title_activity_maps">MapsActivity</string>
 
-    <string name="main_tittle_total_km">Quilòmetres totals recorreguts :</string>
-    <string name="main_tittle_total_medition">: Mesuraments totals realitzats</string>
+    <string name="main_tittle_total_m">Metres totals recorreguts -> </string>
+    <string name="main_tittle_total_medition">Mesuraments totals realitzats -> </string>
     <string name="main_button_loadSaved">CARREGAR RECORREGUTS</string>
     <string name="main_button_activityLocation">ACTIVITY LOCATION</string>
     <string name="main_button_activityMaps">ACTIVITY MAPS</string>
@@ -22,5 +20,51 @@
     <string name="createRoute_checkbox_4G">4G</string>
     <string name="createRoute_checkbox_3G">3G</string>
     <string name="createRoute_checkbox_2G">2G</string>
+    <string name="createRoute_tittle_interval">Seleccioneu l\'interval d\'actualització per a les mides (metres)</string>
+    <string name="createRoute_tittle_selectSim">Dues SIM detectades, seleccioneu la SIM per fer mesuraments</string>
+
+    <string name="createRoute_error_name">El nom no pot estar buit</string>
+    <string name="createRoute_error_nameRepeat">Nom repetit</string>
+    <string name="createRoute_error_interval">L\'interval en metres ha d\'estar entre 5 i 100 metres</string>
+    <string name="createRoute_error_antenna">ERROR D\'ANTENA</string>
+    <string name="createRoute_error_SIM">Almenys una sim ha d\'estar seleccionada</string>
+
+    <string name="loadRoute_button_exit">SORTIR</string>
+    <string name="loadRoute_button_cancel">ELIMINAR</string>
+    <string name="loadRoute_button_load">CARREGAR</string>
+    <string name="loadRoute_text_errorLoad">No s\'ha pogut carregar perquè no hi ha cap element seleccionat</string>
+    <string name="loadRoute_text_errorDelete">No s\'ha pogut eliminar l\'element perquè no hi ha cap element seleccionat</string>
+
+    <string name="mapsRouteActivity_button_exit">SORTIR</string>
+    <string name="mapsRouteActivity_button_save">GUARDAR</string>
+    <string name="mapsRouteActivity_button_newStage">NOVA ETAPA</string>
+    <string name="mapsRouteActivity_text_nameRoute">Nom de ruta: </string>
+    <string name="mapsRouteActivity_text_selectedAntennas">Antena seleccionada: </string>
+    <string name="mapsRouteActivity_text_nameSIMs">Nom de SIM: </string>
+    <string name="mapsRouteActivity_text_nameStage">Etapa actual: </string>
+    <string name="mapsRouteActivity_text_titleStage">Etapa</string>
+    <string name="mapsRoute_text_Tower">Antena de telefonia</string>
+    <string name="mapsRoute_error_Stage">No es pot canviar d\'etapa si no hi ha mesuraments registrats per a l\'etapa actual</string>
+    <string name="mapsRoute_error_SIM">La SIM seleccionada és invàlida o està fora de servei</string>
+    <string name="mapsRoute_error_Antenna">L\'antena seleccionada no està disponible per a la SIM seleccionada</string>
+    <string name="mapsRoute_error_limitMeasurement">Nombre màxim de mesures assolit</string>
+    <string name="mapsRoute_error_intervalDistance">Esperant a assolir la distància especificada</string>
+
+    <string name="mapsActivity_button_save">GUARDAR</string>
+
+    <string name="medida_textDescription1">Etapa </string>
+    <string name="medida_textDescription2">, antena </string>
+    <string name="medida_textDescription3">, posició </string>
+    <string name="medida_textDescription4">, cobertura </string>
+
+    <string name="loadRouteData_button_exit">SORTIR</string>
+    <string name="loadRouteData_button_Return">TORNAR</string>
+    <string name="loadRouteData_text_DescriptionList">Etapa</string>
+    <string name="loadRouteData_text_Description1">Número d\'etapa -> </string>
+    <string name="loadRouteData_text_Description2">Mesura mínima -> </string>
+    <string name="loadRouteData_text_Description3">Mesura màxima -> </string>
+    <string name="loadRouteData_text_Description4">Nombre de mesures -> </string>
+    <string name="loadRouteData_text_Description5">Mesura mitjana -> </string>
+    <string name="loadRouteData_text_textDefect">Seleccioneu un element de la llista superior</string>
 
 </resources>

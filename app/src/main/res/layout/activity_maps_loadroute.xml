@@ -7,14 +7,14 @@
     tools:context=".MapsLoadRouteActivity">
 
     <Button
-        android:id="@+id/button8"
+        android:id="@+id/LoadRouteMaps_Button_Exite"
         android:layout_width="158dp"
         android:layout_height="60dp"
+        android:layout_marginStart="20dp"
         android:layout_marginBottom="20dp"
         android:onClick="exitRoute"
-        android:text="@string/mapsRouteActivity_button_exit"
+        android:text="@string/loadRouteMaps_button_exit"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.gms.maps.MapView
@@ -28,16 +28,27 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:id="@+id/mapsRoute_Text_listViewMeasure"
+        android:id="@+id/LoadRouteData_Text_listViewStages"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/button8"
+        app:layout_constraintBottom_toTopOf="@+id/LoadRouteMaps_Button_Exite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
+
+    <Button
+        android:id="@+id/LoadRouteMaps_Button_MoreData"
+        android:layout_width="168dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:onClick="moreData"
+        android:text="@string/loadRouteMaps_button_MoreData"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

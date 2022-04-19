@@ -119,8 +119,9 @@ public class CreateRouteActivity extends AppCompatActivity {
         //TODO En este momento no vamos a comprobar si existen errores para las antenas
 
         //Comprobamos si existen errores para el intervalo introducido
-        int valorIntervalo = (Integer.parseInt(String.valueOf(interval.getText())))*1000;
-        if( valorIntervalo <= 4999 || valorIntervalo>30000){
+        int valorIntervalo = (Integer.parseInt(String.valueOf(interval.getText())));
+        //TODO PARA LAS PRUEBAS, PUESTO TEMPORALMENTE CON VALOR MÍNIMO DE 1(PONER A 5)
+        if( valorIntervalo < 1 || valorIntervalo>100){
             intervalError.setText(R.string.createRoute_error_interval);
             interval.setBackgroundTintList(ColorStateList.valueOf(0xFFFF0000));
             errorInterval=true;

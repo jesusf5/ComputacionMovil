@@ -1,17 +1,12 @@
 package com.example.computacionmovil;
 
-import android.content.Context;
+import android.graphics.Color;
 
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class Auxiliar {
 
-    public static BitmapDescriptor obtenerTipoMarcador(int valueMeasured, int antenna) {
+    public static float obtenerTipoMarcador(int valueMeasured, int antenna) {
         //TODO Fuente de los datos(4G y 3G): https://www.xatakandroid.com/productividad-herramientas/como-saber-intensidad-senal-movil-android-que-significan-valores-dbm
         //TODO Fuente de los datos(2G): https://norfipc.com/redes/intensidad-nivel-senal-redes-moviles-2g-3g-4g.php
 
@@ -29,11 +24,11 @@ public class Auxiliar {
             //Y así seguimos, podemos operar más facil si hacemos ((-)MinValue)+(valueMeasured)
             int valorRealDBM = 120+valueMeasured;
             if (-90 <= valueMeasured) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                return BitmapDescriptorFactory.HUE_GREEN;
             } else if (-119 <= valueMeasured) {
-                return BitmapDescriptorFactory.defaultMarker(valorRealDBM*4);
+                return valorRealDBM*4;
             } else {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                return BitmapDescriptorFactory.HUE_RED;
             }
         } else if(antenna==3){
             //Para el rango del 3G se establece entre 40 dbm de diferencia, mientras que la escala de color va desde 0(ROJO)-120(VERDE)
@@ -48,11 +43,11 @@ public class Auxiliar {
             //Y así seguimos, podemos operar más facil si hacemos ((-)MinValue)+(valueMeasured)
             int valorRealDBM = 110+valueMeasured;
             if (-70 <= valueMeasured) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                return BitmapDescriptorFactory.HUE_GREEN;
             } else if (-109 <= valueMeasured) {
-                return BitmapDescriptorFactory.defaultMarker(valorRealDBM*3);
+                return valorRealDBM*3;
             } else {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                return BitmapDescriptorFactory.HUE_RED;
             }
         } else if(antenna==2){
 
@@ -68,14 +63,32 @@ public class Auxiliar {
             //Y así seguimos, podemos operar más facil si hacemos ((-)MinValue)+(valueMeasured)
             int valorRealDBM = 120+valueMeasured;
             if (-80 <= valueMeasured) {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                return BitmapDescriptorFactory.HUE_GREEN;
             } else if (-119 <= valueMeasured) {
-                return BitmapDescriptorFactory.defaultMarker(valorRealDBM*3);
+                return valorRealDBM*3;
             } else {
-                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                return BitmapDescriptorFactory.HUE_RED;
             }
         }
-        return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        return BitmapDescriptorFactory.HUE_BLUE;
+    }
+
+    //Para distinguir las distintas etapa, vamos a asignar un color distinto a cada una en función de su módulo
+    static int getColorStage(int stage) {
+        int modStage = stage%5;
+        switch (modStage){
+            case 0:
+                return Color.RED;
+            case 1:
+                return Color.BLUE;
+            case 2:
+                return Color.GREEN;
+            case 3:
+                return Color.MAGENTA;
+            case 4:
+                return Color.YELLOW;
+        }
+        return Color.BLACK;
     }
 
 }

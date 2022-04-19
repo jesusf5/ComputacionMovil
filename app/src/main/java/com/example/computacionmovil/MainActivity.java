@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -17,7 +18,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ((TextView)findViewById(R.id.main_Text_ValueTotalMeasurement)).setText(String.valueOf(Arrays.stream(Objects.requireNonNull(getApplicationContext().getExternalFilesDir("").listFiles())).count()));
+        long nFicheros = Arrays.stream(Objects.requireNonNull(getApplicationContext().getExternalFilesDir("").listFiles())).count();
+        if(nFicheros>0){
+            ((TextView)findViewById(R.id.main_Text_ValueTotalMeasurement)).setText(String.valueOf(nFicheros-1));
+        }else{
+            ((TextView)findViewById(R.id.main_Text_ValueTotalMeasurement)).setText(String.valueOf(0));
+        }
+
+
+        String distanceReader = "0";
+        try {
+            distanceReader = StorageHelper.readStringFromFile(getString(R.string.fileDistances),getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ((TextView)findViewById(R.id.main_Text_ValueTotalMeters)).setText(distanceReader);
     }
 
     public void openLocationActivity(View w){
@@ -27,11 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void openMapsActivity(View w){
         Intent intent=new Intent(this, MapsActivity.class);
-        startActivity(intent);
-    }
-
-    public void openSettingActivity(View w){
-        Intent intent=new Intent(this, SettingActivity.class);
         startActivity(intent);
     }
 

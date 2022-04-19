@@ -12,14 +12,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ComputacionMovil">
+        android:theme="@style/Theme.ComputacionMovil"
+        android:screenOrientation="portrait"
+        >
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -40,20 +40,26 @@
 
         <activity
             android:name=".MapsActivity"
+            android:exported="true"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".LocationActivity"
             android:exported="true"
             android:screenOrientation="portrait"/>
         <activity android:name=".LoadRouteActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SettingActivity"
+            android:exported="true"
             android:screenOrientation="portrait"/>
         <activity android:name=".CreateRouteActivity"
+            android:exported="true"
             android:screenOrientation="portrait"/>
         <activity android:name=".MapsRoutesActivity"
+            android:exported="true"
             android:screenOrientation="portrait"/>
         <activity android:name=".MapsLoadRouteActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".LoadRouteDataActivity"
+            android:exported="true"
             android:screenOrientation="portrait"/>
     </application>
 
