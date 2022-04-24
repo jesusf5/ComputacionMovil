@@ -40,7 +40,6 @@
         android:hint="@string/createRoute_textInput_name"
         android:inputType="textPersonName"
         android:minHeight="48dp"
-        android:text="Example"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -116,7 +115,8 @@
         android:text="@string/createRoute_textInput_interval"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/CreateRoute_Tittle_Interval" />
+        app:layout_constraintTop_toBottomOf="@+id/CreateRoute_Tittle_Interval"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/CreateRoute_Tittle_Interval"
@@ -127,43 +127,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/createRoute_Text_AntennaError" />
-
-    <TextView
-        android:id="@+id/CreateRoute_Tittle_SelectedSIM"
-        android:layout_width="229dp"
-        android:layout_height="34dp"
-        android:gravity="center"
-        android:text="@string/createRoute_tittle_selectSim"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createRoute_Text_IntervalError" />
-
-    <CheckBox
-        android:id="@+id/createRoute_CheckBox_SIM1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="20dp"
-        android:checked="true"
-        android:text="@string/createRoute_checkbox_SIM1"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/createRoute_CheckBox_SIM2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/CreateRoute_Tittle_SelectedSIM" />
-
-    <CheckBox
-        android:id="@+id/createRoute_CheckBox_SIM2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="40dp"
-        android:text="@string/createRoute_checkbox_SIM2"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/createRoute_CheckBox_SIM1"
-        app:layout_constraintTop_toBottomOf="@+id/CreateRoute_Tittle_SelectedSIM" />
 
     <TextView
         android:id="@+id/createRoute_Text_AntennaError"
@@ -194,15 +157,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/createRoute_Text_InputInterval" />
-
-    <TextView
-        android:id="@+id/createRoute_Text_SimError"
-        android:layout_width="331dp"
-        android:layout_height="40dp"
-        android:gravity="center"
-        android:textColor="#FF0000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createRoute_CheckBox_SIM1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

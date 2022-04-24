@@ -44,11 +44,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
+    //TODO ELIMINAR CLASE ANTES DE TERMINAR
     //Creamos una variable para el mapa
     private MapView mMapView;
 
-    //TODO SUPER PROVISIONAL PARA COMPROBAR SI FUNCIONA
     private GoogleMap gM;
 
     @Override
@@ -139,7 +138,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
         //Comprobamos los permisos necesarios y en caso de no tenerlos, los solicitamos
-        //TODO REVISAR POR A VECES HACE COSAS RARAS AL PEDIR LOS PERMISOS LA PRIMERA VEZ
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }else  if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED){

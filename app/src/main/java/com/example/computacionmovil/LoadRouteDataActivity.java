@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,9 +15,6 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +44,7 @@ public class LoadRouteDataActivity extends AppCompatActivity {
         }
 
         try {
-            etapas = StorageHelper.readEtapasFromFile(name,getApplicationContext());
+            etapas = StorageHelper.readRecorridoFromFile(name,getApplicationContext()).getEtapas();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,11 +101,15 @@ public class LoadRouteDataActivity extends AppCompatActivity {
 
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setValueTextSize(16f);
-        barChart.getDescription().setEnabled(true);
+        barChart.getDescription().setEnabled(false);
+        barChart.getLegend().setEnabled(false);
 
         //Métodos para que el gráfico se actualice automaticamente
         barChart.notifyDataSetChanged();
         barChart.invalidate();
+
+        //Establecemos que mientras que estemos en esta actividad, no se pueda apagar la pantalla
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void volver(View v){

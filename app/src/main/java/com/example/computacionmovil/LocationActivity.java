@@ -18,7 +18,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 public class LocationActivity extends AppCompatActivity {
-
+    //TODO ELIMINAR CLASE ANTES DE TERMINAR
     private FusedLocationProviderClient client;
     LocationCallback callback;
     LocationRequest request;

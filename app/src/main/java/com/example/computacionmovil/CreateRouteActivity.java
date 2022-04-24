@@ -1,24 +1,16 @@
 package com.example.computacionmovil;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.os.Build;
 import android.os.Bundle;
-import android.telephony.CellInfo;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import java.io.File;
-import java.util.List;
 
 public class CreateRouteActivity extends AppCompatActivity {
 
@@ -27,17 +19,13 @@ public class CreateRouteActivity extends AppCompatActivity {
     private TextView nameError;
 
     //Declaramos los elementos relacionados con las antenas de la ruta
-    private CheckBox checkBox2G,checkBox3G,checkBox4G;
-    private TextView antennaError; //TODO QUITAR, PROVISIONAMENTE, POR SI IMPLEMENTAMOS ALGUN ERROR PARA LAS ANTENAS
+    private CheckBox checkBox2G,checkBox3G,checkBox4G; //CheckBox para seleccionar una de las antenas(4G,3G o 2G)
+    private TextView antennaError; //Texto para posibles implementaciones de errores en la selección de las antenas
     private int antennaSelected = 4; //Por defecto marcada la antena de 4G
 
     //Declaramos los elementos relacionados con el intervalo de la ruta
-    private EditText interval; //TODO REVISAR COMO VAMOS A IMPLEMENTAR EL TEMA DE LOS INTERVALOS FINALMENTE, POR DISTANCIA?, TIEMPO?, BOTÓN?
-    private TextView intervalError;
-
-    //Declaramos los elementos relacionados con las sims de la ruta
-    private CheckBox sim1,sim2;
-    private TextView simError;
+    private EditText interval; //Intervalo de metros entre mediciones
+    private TextView intervalError; //TextView para mostrar los errores derivados del intervalo introducido
 
 
     @Override
@@ -64,30 +52,16 @@ public class CreateRouteActivity extends AppCompatActivity {
         interval = findViewById(R.id.createRoute_Text_InputInterval);
         intervalError = findViewById(R.id.createRoute_Text_IntervalError);
 
-        //Inicializamos los valores necesarios para introducir las SIMs
-        sim1 = findViewById(R.id.createRoute_CheckBox_SIM1);
-        sim2 = findViewById(R.id.createRoute_CheckBox_SIM2);
-
-        sim1.setOnClickListener(checkboxListenerSIM);
-        sim2.setOnClickListener(checkboxListenerSIM);
-
-        simError = findViewById(R.id.createRoute_Text_SimError);
-
-        //Establecemos las sims que deben aparecer como seleccionables en función de las disponibles en el dispositivo
-        setNameSIMs();
-
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        setNameSIMs();
     }
 
     @Override
     protected void onStart(){
         super.onStart();
-        setNameSIMs();
     }
 
     public void cancelMainActivity(View w){
@@ -96,8 +70,6 @@ public class CreateRouteActivity extends AppCompatActivity {
     }
 
     public void createRoute(View w){
-        //TODO No voy a implementar un error para las antenas pero queda hecho a medida por si queremos implementarlo
-
         //Antes de crear la ruta comprobamos que vaya a surgir errores con los valores introducidos
         //Para ello creamos un variable booleana de error para cada uno de los datos introducidos(inicialmente a false todas)
         boolean errorName = false, errorInterval = false, errorSIM = false;
@@ -116,11 +88,8 @@ public class CreateRouteActivity extends AppCompatActivity {
             name.setBackgroundTintList(ColorStateList.valueOf(0xFF000000));
         }
 
-        //TODO En este momento no vamos a comprobar si existen errores para las antenas
-
         //Comprobamos si existen errores para el intervalo introducido
         int valorIntervalo = (Integer.parseInt(String.valueOf(interval.getText())));
-        //TODO PARA LAS PRUEBAS, PUESTO TEMPORALMENTE CON VALOR MÍNIMO DE 1(PONER A 5)
         if( valorIntervalo < 1 || valorIntervalo>100){
             intervalError.setText(R.string.createRoute_error_interval);
             interval.setBackgroundTintList(ColorStateList.valueOf(0xFFFF0000));
@@ -128,16 +97,6 @@ public class CreateRouteActivity extends AppCompatActivity {
         }else{
             intervalError.setText("");
             interval.setBackgroundTintList(ColorStateList.valueOf(0xFF000000));
-        }
-
-        //TODO Con la nueva filosofía de solo leer de una tarjeta no tiene mucho sentido
-
-        // Comprobamos si existen errores para la/las SIMs seleccionadas
-        if( !sim1.isChecked() && !sim2.isChecked() ){
-            simError.setText(R.string.createRoute_error_SIM);
-            errorSIM=true;
-        }else{
-            simError.setText("");
         }
 
         //Comprobamos que no se haya producido ningun error antes de pasar a crear la nueva ruta
@@ -150,13 +109,6 @@ public class CreateRouteActivity extends AppCompatActivity {
             b.putInt("antennaSelected", antennaSelected);
             b.putInt("interval", valorIntervalo);
 
-            int selectedSim = 0;
-            if(sim1.isChecked()){
-                selectedSim=1;
-            }else if(sim2.isChecked()){
-                selectedSim =2;
-            }
-            b.putInt("selectedSim", selectedSim);
             intent.putExtras(b);
 
             startActivity(intent);
@@ -179,52 +131,6 @@ public class CreateRouteActivity extends AppCompatActivity {
         return false;
     }
 
-    //TODO REVISAR, FUNCIONA MAL
-    private void setNameSIMs() {
-
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-
-        //Comprobamos si tenemos acceso a todos los permisos necesarios
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-        }else if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 0);
-        }
-
-
-        List<CellInfo> cellInfos = telephonyManager.getAllCellInfo();   //Obtiene información sobre todas las SIMs del teléfono movil
-
-
-        if(cellInfos!=null){
-            int registeredIndex = 0;
-
-            //Si el sistema operativo es ANDROID 11 o superior, comprobamos si existe la posibilidad e MULTI SIM permitimos seleccionar entre las distintas SIMs disponibles.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && telephonyManager.getActiveModemCount() == 2) {
-                for (int i = 0; i<cellInfos.size(); i++){
-                    if (cellInfos.get(i).isRegistered()){
-                        //Comprobamos la cantidad de targetas SIM registradas
-                        registeredIndex++;
-                        if(registeredIndex==1){
-                            //Método solo válido para versiones altas de android
-                            sim1.setText(cellInfos.get(i).getCellIdentity().getOperatorAlphaShort().toString().toUpperCase());
-                        }else{
-                            //Método solo válido para versiones altas de android
-                            sim2.setText(cellInfos.get(i).getCellIdentity().getOperatorAlphaShort().toString().toUpperCase());
-                        }
-                    }
-                }
-                //Si se han encontrado varias SIM registradas, las mostramos por pantalla para permitir la selección
-                if(registeredIndex>1) {
-                    findViewById(R.id.CreateRoute_Tittle_SelectedSIM).setVisibility(View.VISIBLE);
-                    sim1.setVisibility(View.VISIBLE);
-                    sim2.setVisibility(View.VISIBLE);
-                }
-            }
-            //En caso de que no sea ANDROID 11 o superior, o bien si hemos detectado que no hay MULTI SIM
-            //Nos quedamos con la SIM identificada en la primera posición(La única o la del primer SLOT)
-        }
-    }
-
 
     //Para asegurarnos de que solo se selecciona una SIM y una antena, implementamos unos Listener para cada uno de estos valores.
     View.OnClickListener checkboxListenerAntenna = new View.OnClickListener() {
@@ -245,19 +151,6 @@ public class CreateRouteActivity extends AppCompatActivity {
                 checkBox3G.setChecked(false);
                 checkBox2G.setChecked(true);
                 antennaSelected=2;
-            }
-        }
-    };
-
-    View.OnClickListener checkboxListenerSIM = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (v == sim1){
-                sim2.setChecked(false);
-                sim1.setChecked(true);
-            } else   if (v == sim2){
-                sim2.setChecked(true);
-                sim1.setChecked(false);
             }
         }
     };

@@ -3,10 +3,10 @@ package com.example.computacionmovil;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,8 +47,6 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
     LocationCallback callback;
     LocationRequest request;
 
-    //TODO SUPER PROVISIONAL PARA COMPROBAR SI FUNCIONA
-    private boolean loadedMark;
     private GoogleMap gM;
     private MapView mMapView;
 
@@ -61,11 +59,8 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_loadroute);
 
-        //Establecemos que inicialmente los marcadores no han sido instalados, para que se inicializaen una vez que el mapa este listo
-        loadedMark=false;
-
         //Inicializamos el mapa
-        mMapView = (MapView) findViewById(R.id.mapView);
+        mMapView = findViewById(R.id.mapView);
         mMapView.onCreate(null);
         mMapView.getMapAsync(this);
 
@@ -77,7 +72,7 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
 
         //Obtenemos las medidas para la ruta seleccionada
         try {
-            arrayEtapas = StorageHelper.readEtapasFromFile(name,getApplicationContext());
+            arrayEtapas = StorageHelper.readRecorridoFromFile(name,getApplicationContext()).getEtapas();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -125,7 +120,8 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
         //Iniciamos la actualización de la ubicación
         requestLocationUpdates();
 
-
+        //Establecemos que mientras que estemos en esta actividad, no se pueda apagar la pantalla
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -134,7 +130,6 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
 
         gM = googleMap;
         startShowingLocation();
-        //TODO DIBUJAR LAS LÍNEAS DE LAS DISTINTAS ETAPAS
         //En cuanto el mapa este listo, establecemos los marcadores de todas las mediciones realizadas
         for (Etapa e : arrayEtapas){
             if(e!=null){

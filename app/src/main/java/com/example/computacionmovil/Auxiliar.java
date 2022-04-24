@@ -7,8 +7,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 public class Auxiliar {
 
     public static float obtenerTipoMarcador(int valueMeasured, int antenna) {
-        //TODO Fuente de los datos(4G y 3G): https://www.xatakandroid.com/productividad-herramientas/como-saber-intensidad-senal-movil-android-que-significan-valores-dbm
-        //TODO Fuente de los datos(2G): https://norfipc.com/redes/intensidad-nivel-senal-redes-moviles-2g-3g-4g.php
+        //Fuente de los datos(4G y 3G): https://www.xatakandroid.com/productividad-herramientas/como-saber-intensidad-senal-movil-android-que-significan-valores-dbm
+        //Fuente de los datos(2G): https://norfipc.com/redes/intensidad-nivel-senal-redes-moviles-2g-3g-4g.php
 
         //Método para obtener el marcador de color correcto en función del valor medido en dbm y de la antena en la que se ha realizado la medición.
         if(antenna==4){

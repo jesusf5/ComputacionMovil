@@ -8,6 +8,8 @@
     <string name="main_button_activityMaps">ACTIVITY MAPS</string>
     <string name="main_button_newReco">NOU RECORREGUT</string>
     <string name="main_button_conf">Conf</string>
+    <string name="main_text_errorLecturaFichero">Un dels fitxers de la pantalla de càrrega de recorreguts està danyat o corrupte, això es pot deure a una desistiment parcial de laplicació. Procedir a l\'esborrat aquests fitxers.</string>
+    <string name="main_text_errorSaveRecorr">No és possible guardar un recorregut si no hi ha mesures per a aquest</string>
 
     <string name="setting_button_save">GUARDAR</string>
     <string name="setting_button_cancel">CANCEL·LAR</string>
@@ -25,7 +27,7 @@
 
     <string name="createRoute_error_name">El nom no pot estar buit</string>
     <string name="createRoute_error_nameRepeat">Nom repetit</string>
-    <string name="createRoute_error_interval">L\'interval en metres ha d\'estar entre 5 i 100 metres</string>
+    <string name="createRoute_error_interval">L\'interval en metres ha d\'estar entre 1 i 100 metres</string>
     <string name="createRoute_error_antenna">ERROR D\'ANTENA</string>
     <string name="createRoute_error_SIM">Almenys una sim ha d\'estar seleccionada</string>
 
@@ -34,6 +36,8 @@
     <string name="loadRoute_button_load">CARREGAR</string>
     <string name="loadRoute_text_errorLoad">No s\'ha pogut carregar perquè no hi ha cap element seleccionat</string>
     <string name="loadRoute_text_errorDelete">No s\'ha pogut eliminar l\'element perquè no hi ha cap element seleccionat</string>
+    <string name="mapsRoute_error_MaximunStage">Màxima etapa aconseguida</string>
+    <string name="loadRoute_text_deleted">eliminat</string>
 
     <string name="mapsRouteActivity_button_exit">SORTIR</string>
     <string name="mapsRouteActivity_button_save">GUARDAR</string>
@@ -47,7 +51,7 @@
     <string name="mapsRoute_error_Stage">No es pot canviar d\'etapa si no hi ha mesuraments registrats per a l\'etapa actual</string>
     <string name="mapsRoute_error_SIM">La SIM seleccionada és invàlida o està fora de servei</string>
     <string name="mapsRoute_error_Antenna">L\'antena seleccionada no està disponible per a la SIM seleccionada</string>
-    <string name="mapsRoute_error_limitMeasurement">Nombre màxim de mesures assolit</string>
+    <string name="mapsRoute_error_limitMeasurement">Nombre màxim de mesures aconseguit per a l\'etapa actual, iniciant nova etapa</string>
     <string name="mapsRoute_error_intervalDistance">Esperant a assolir la distància especificada</string>
 
     <string name="mapsActivity_button_save">GUARDAR</string>

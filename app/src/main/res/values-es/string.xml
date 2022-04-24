@@ -8,6 +8,8 @@
     <string name="main_button_activityMaps">ACTIVITY MAPS</string>
     <string name="main_button_newReco">NUEVO RECORRIDO</string>
     <string name="main_button_conf">Conf</string>
+    <string name="main_text_errorLecturaFichero">Uno de los ficheros de la pantalla de carga de recorridos se encuentra dañado o corrupto, esto se puede deber a una desistalación parcial de la aplicación. Procediendo al borrado dichos ficheros.</string>
+    <string name="main_text_errorSaveRecorr">No es posible guardar un recorrido si no existen medidas para este.</string>
 
     <string name="setting_button_save">GUARDAR</string>
     <string name="setting_button_cancel">CANCELAR</string>
@@ -25,7 +27,7 @@
 
     <string name="createRoute_error_name">El nombre no puede estar vacío</string>
     <string name="createRoute_error_nameRepeat">Nombre repetido</string>
-    <string name="createRoute_error_interval">El intervalo en metros debe estar entre 5 y 100 metros</string>
+    <string name="createRoute_error_interval">El intervalo en metros debe estar entre 1 y 100 metros</string>
     <string name="createRoute_error_antenna">ERROR DE ANTENA</string>
     <string name="createRoute_error_SIM">Al menos una sim debe estar seleccionada</string>
 
@@ -34,6 +36,7 @@
     <string name="loadRoute_button_load">CARGAR</string>
     <string name="loadRoute_text_errorLoad">No se pudo cargar porque no hay ningún elemento seleccionado</string>
     <string name="loadRoute_text_errorDelete">No se pudo eliminar el elemento porque no hay ningún elemento seleccionado</string>
+    <string name="loadRoute_text_deleted">eliminado</string>
 
     <string name="mapsRouteActivity_button_exit">SALIR</string>
     <string name="mapsRouteActivity_button_save">GUARDAR</string>
@@ -46,8 +49,9 @@
     <string name="mapsRoute_text_Tower">Antena de telefonía</string>
     <string name="mapsRoute_error_SIM">La SIM seleccionada es inválida o está fuera de servicio</string>
     <string name="mapsRoute_error_Stage">No es posible cambiar de etapa si no hay mediciones registradas para la etapa actual</string>
+    <string name="mapsRoute_error_MaximunStage">Máxima etapa alcanzada</string>
     <string name="mapsRoute_error_Antenna">La antena seleccionada no esta disponible para la SIM seleccionada</string>
-    <string name="mapsRoute_error_limitMeasurement">Número máximo de medidas alcanzado</string>
+    <string name="mapsRoute_error_limitMeasurement">Número máximo de medidas alcanzado para la etapa actual, iniciando nueva etapa</string>
     <string name="mapsRoute_error_intervalDistance">Esperando a alcanzar la distancia especificada</string>
 
     <string name="mapsActivity_button_save">GUARDAR</string>

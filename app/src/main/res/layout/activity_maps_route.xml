@@ -43,11 +43,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:gravity="center"
         android:text="@string/NULL"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.472"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+        app:layout_constraintTop_toBottomOf="@+id/mapsRoute_Text_Separator" />
 
     <TextView
         android:id="@+id/textNameRoute"
@@ -88,12 +89,10 @@
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/mapsRoute_Text_Separator"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:contentDescription="@string/NULL"
-        android:text=" "
         app:layout_constraintEnd_toStartOf="@+id/textSelectedAntennas"
         app:layout_constraintStart_toEndOf="@+id/mapsRoute_Text_ValueName"
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
@@ -137,7 +136,7 @@
         app:layout_constraintTop_toBottomOf="@+id/mapsRoute_Text_ValueReadAntennas" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/mapsRoute_Text_Separator2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -151,7 +150,7 @@
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
-        android:onClick="newStage"
+        android:onClick="newStageButton"
         android:text="@string/mapsRouteActivity_button_newStage"
         app:layout_constraintBottom_toTopOf="@+id/LoadRouteMaps_Button_Exite"
         app:layout_constraintStart_toStartOf="parent"
@@ -162,6 +161,9 @@
         android:id="@+id/LoadRouteData_Text_listViewStages"
         android:layout_width="206dp"
         android:layout_height="80dp"
+        android:scrollbarAlwaysDrawHorizontalTrack="true"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="horizontal|vertical"
         app:layout_constraintBottom_toTopOf="@+id/button9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textNamePhase" />

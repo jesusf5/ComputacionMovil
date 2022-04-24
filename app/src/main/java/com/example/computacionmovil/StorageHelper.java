@@ -23,7 +23,7 @@ public class StorageHelper {
      * Los ficheros asÃ­ almacenados se borrarÃ¡n si la aplicaciÃ³n se desinstala.
      * @param filename Nombre del fichero
      * @param content Contenido que se escribirÃ¡ en el fichero
-     * @param context Contexto (e.g. Activity) desde el que se llama al mÃ©todo
+     * @param context Contexto (e.g. Activity) desde el que se llama al método
      */
     public static void saveStringToFile(String filename,String content, Context context) throws IOException {
         File file = new File(context.getExternalFilesDir(null), filename);
@@ -34,10 +34,10 @@ public class StorageHelper {
     }
 
     /**
-     * Lee el contenido de un fichero y lo devuelve como String, a partir del nombre del fichero (relativo al mismo path mencionado en el mÃ©todo de escritura:
+     * Lee el contenido de un fichero y lo devuelve como String, a partir del nombre del fichero (relativo al mismo path mencionado en el método de escritura:
      * AlmacenamientoInternoCompartido>Android>Data>(nombre paquete de app)>).
      * @param filename Nombre del fichero
-     * @param context Contexto (e.g. Activity) desde el que se llama al mÃ©todo
+     * @param context Contexto (e.g. Activity) desde el que se llama al método
      */
     public static String readStringFromFile(String filename, Context context) throws IOException {
         File file=new File(context.getExternalFilesDir(null),filename);
@@ -80,7 +80,7 @@ public class StorageHelper {
         Matcher m = p.matcher(content);
         int countActualMedida = 0;
         while(m.find()){
-            arrayMedidas[countActualMedida] = new Medida(context.getApplicationContext(), Integer.valueOf(Objects.requireNonNull(m.group(8))), Double.valueOf(Objects.requireNonNull(m.group(12))), Double.valueOf(Objects.requireNonNull(m.group(10))), Integer.valueOf(Objects.requireNonNull(m.group(2))), Integer.valueOf(Objects.requireNonNull(m.group(5))));
+            arrayMedidas[countActualMedida] = new Medida(context.getApplicationContext(), Integer.parseInt(Objects.requireNonNull(m.group(8))), Double.parseDouble(Objects.requireNonNull(m.group(12))), Double.parseDouble(Objects.requireNonNull(m.group(10))), Integer.parseInt(Objects.requireNonNull(m.group(2))), Integer.parseInt(Objects.requireNonNull(m.group(5))));
             countActualMedida++;
         }
 
@@ -89,7 +89,9 @@ public class StorageHelper {
     }
 
     //Lectura de medidas desde un fichero JSON
-    public static Etapa[] readEtapasFromFile(String filename, Context context) throws IOException {
+    public static Recorrido readRecorridoFromFile(String filename, Context context) throws IOException {
+        Recorrido r = null;
+
         int nEtapa = 0;
         Etapa[] arrayEtapas;
 
@@ -107,7 +109,6 @@ public class StorageHelper {
         }
         arrayEtapas = new Etapa[nEtapa];
 
-        //TODO SEGURO QUE NO SE ESTA COGIENDO BIEN LAS MEDIDAS
         Pattern p = Pattern.compile("\"maxMedidaEtapa\":(-?(\\d+)(\\.\\d+)?),\"medMedidaEtapa\":((-?\\d+)(\\.\\d+)?),\"minMedidaEtapa\":(-?(\\d+)(\\.\\d+)?),\"nEtapa\":((\\d+)(\\.\\d+)?),\"nMedidasEtapa\":((\\d+)(\\.\\d+)?),\"medidas\":([^\\]]*)?");
         Matcher m = p.matcher(content);
 
@@ -123,7 +124,7 @@ public class StorageHelper {
             //         {"antena":3,"dbm":-67,"etapa":1,"latitud":37.6813219,"longitud":-1.6890355}
             // Simplemente contamos el número de veces que aparece alguna de las palabras
             Pattern nMedidasPattern = Pattern.compile("antena");
-            Matcher nMedidasMatcher = nMedidasPattern.matcher(m.group(16));
+            Matcher nMedidasMatcher = nMedidasPattern.matcher(Objects.requireNonNull(m.group(16)));
             Log.d("Contenido del ultimo grupo", m.group(16));
             while (nMedidasMatcher.find()) {
                 nMedidas++;
@@ -132,18 +133,25 @@ public class StorageHelper {
 
             //Una vez tenemos el  array pasamos a recorrer todas las medidas del fichero y almacenarlas en nuestro array
             Pattern p2 = Pattern.compile("\"antena\":((\\d+)(\\.\\d+)?),\"dbm\":((-\\d+)(\\.\\d+)?),\"etapa\":((\\d+)(\\.\\d+)?),\"latitud\":(-?\\d+(\\.\\d+)?),\"longitud\":(-?\\d+(\\.\\d+)?)");
-            Matcher m2 = p2.matcher(m.group(16));
+            Matcher m2 = p2.matcher(Objects.requireNonNull(m.group(16)));
             int countActualMedida = 0;
             while (m2.find()) {
-                arrayMedidasEtapa[countActualMedida] = new Medida(context.getApplicationContext(), Integer.valueOf(Objects.requireNonNull(m2.group(8))), Double.valueOf(Objects.requireNonNull(m2.group(12))), Double.valueOf(Objects.requireNonNull(m2.group(10))), Integer.valueOf(Objects.requireNonNull(m2.group(2))), Integer.valueOf(Objects.requireNonNull(m2.group(5))));
+                arrayMedidasEtapa[countActualMedida] = new Medida(context.getApplicationContext(), Integer.parseInt(Objects.requireNonNull(m2.group(8))), Double.parseDouble(Objects.requireNonNull(m2.group(12))), Double.parseDouble(Objects.requireNonNull(m2.group(10))), Integer.parseInt(Objects.requireNonNull(m2.group(2))), Integer.parseInt(Objects.requireNonNull(m2.group(5))));
                 countActualMedida++;
             }
 
-            arrayEtapas[countActualEtapa] = new Etapa(context.getApplicationContext(), Integer.valueOf(Objects.requireNonNull(m.group(11))), Integer.valueOf(Objects.requireNonNull(m.group(7))), Integer.valueOf(Objects.requireNonNull(m.group(4))), Integer.valueOf(Objects.requireNonNull(m.group(1))), Integer.valueOf(Objects.requireNonNull(m.group(14))),arrayMedidasEtapa);
+            arrayEtapas[countActualEtapa] = new Etapa(context.getApplicationContext(), Integer.parseInt(Objects.requireNonNull(m.group(11))), Integer.parseInt(Objects.requireNonNull(m.group(7))), Integer.parseInt(Objects.requireNonNull(m.group(4))), Integer.parseInt(Objects.requireNonNull(m.group(1))), Integer.parseInt(Objects.requireNonNull(m.group(14))),arrayMedidasEtapa);
             countActualEtapa++;
         }
+
+        Pattern recorridoPattern = Pattern.compile("\"recorrido\":\\{\"maxMedida\":((-?\\d+)(\\.\\d+)?),\"medMedida\":((-?\\d+)(\\.\\d+)?),\"minMedida\":((-?\\d+)(\\.\\d+)?),\"nMedidas\":((\\d+)(\\.\\d+)?)(.*)");
+        Matcher recorridoMatcher = recorridoPattern.matcher(content);
+        if(recorridoMatcher.find()){
+            r = new Recorrido(context,Integer.parseInt(Objects.requireNonNull(recorridoMatcher.group(7))),Integer.parseInt(Objects.requireNonNull(recorridoMatcher.group(4))),Integer.parseInt(Objects.requireNonNull(recorridoMatcher.group(1))),Integer.parseInt(Objects.requireNonNull(recorridoMatcher.group(10))),arrayEtapas);
+        }
+
         //Devolvemos el array con todas las mediciones de la ruta asociada a este fichero
-        return arrayEtapas;
+        return r;
     }
 
 

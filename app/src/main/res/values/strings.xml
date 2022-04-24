@@ -11,9 +11,11 @@
     <string name="main_button_activityMaps">ACTIVITY MAPS</string>
     <string name="main_button_newReco">NEW ROUTE</string>
     <string name="main_button_conf">Conf</string>
+    <string name="main_text_errorLecturaFichero">One of the files on the route loading screen is damaged or corrupted, this may be due to a partial uninstallation of the application. Proceeding to delete these files.</string>
+    <string name="main_text_errorSaveRecorr">It is not possible to save a tour if there are no measures for it.</string>
 
     <string name="setting_button_save">SAVE</string>
-    <string name="setting_button_cancel">CANCEL</string>
+    <string name="setting_button_cancel">@android:string/cancel</string>
 
     <string name="createRoute_text_name">Route name</string>
     <string name="createRoute_textInput_name">Name</string>
@@ -31,7 +33,7 @@
 
     <string name="createRoute_error_name">The name cannot be empty</string>
     <string name="createRoute_error_nameRepeat">Repeated name</string>
-    <string name="createRoute_error_interval">The interval in meters must be between 5 and 100 meters</string>
+    <string name="createRoute_error_interval">The interval in meters must be between 1 and 100 meters</string>
     <string name="createRoute_error_antenna">ANTENNA ERROR</string>
     <string name="createRoute_error_SIM">At least one SIM must be selected</string>
 
@@ -40,6 +42,11 @@
     <string name="loadRoute_button_load">LOAD</string>
     <string name="loadRoute_text_errorLoad">Could not load because there is no selected item</string>
     <string name="loadRoute_text_errorDelete">The item could not be deleted because there is no item selected</string>
+    <string name="loadRoute_text_min" translatable="false">MIN:</string>
+    <string name="loadRoute_text_max" translatable="false">,MAX:</string>
+    <string name="loadRoute_text_med" translatable="false">,MED:</string>
+    <string name="loadRoute_text_nmeasures" translatable="false">,Nº:</string>
+    <string name="loadRoute_text_deleted">deleted</string>
 
     <string name="mapsRouteActivity_map" translatable="false">Maps</string>
     <string name="mapsRouteActivity_button_exit">EXIT</string>
@@ -53,8 +60,9 @@
     <string name="mapsRoute_text_Tower">Telephone tower</string>
     <string name="mapsRoute_error_SIM">Sim selected invalid or out of order</string>
     <string name="mapsRoute_error_Stage">It is not possible to change stages if there are no measurements recorded for the current stage</string>
+    <string name="mapsRoute_error_MaximunStage">Maximum stage reached</string>
     <string name="mapsRoute_error_Antenna">The selected antenna is not operational for this SIM</string>
-    <string name="mapsRoute_error_limitMeasurement">Maximum number of measurements reached</string>
+    <string name="mapsRoute_error_limitMeasurement">Maximum number of measurements for this stage reached, starting new stage</string>
     <string name="mapsRoute_error_intervalDistance">Waiting at specified distance</string>
 
     <string name="mapsActivity_map" translatable="false">Maps</string>
