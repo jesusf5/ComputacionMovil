@@ -64,6 +64,7 @@
     <string name="mapsRoute_error_Antenna">The selected antenna is not operational for this SIM</string>
     <string name="mapsRoute_error_limitMeasurement">Maximum number of measurements for this stage reached, starting new stage</string>
     <string name="mapsRoute_error_intervalDistance">Waiting at specified distance</string>
+    <string name="mapsRoute_error_readyAntena">Waiting for data on antennas</string>
 
     <string name="mapsActivity_map" translatable="false">Maps</string>
     <string name="mapsActivity_button_save">SAVE</string>
@@ -73,8 +74,8 @@
     <string name="medida_textDescription3">, position </string>
     <string name="medida_textDescription4">, coverage </string>
 
-    <string name="loadRouteMaps_button_exit" translatable="false">EXIT</string>
-    <string name="loadRouteMaps_button_MoreData" translatable="false">MORE DATA</string>
+    <string name="loadRouteMaps_button_exit">EXIT</string>
+    <string name="loadRouteMaps_button_MoreData">MORE DATA</string>
 
     <string name="loadRouteData_button_exit">EXIT</string>
     <string name="loadRouteData_button_Return">RETURN</string>

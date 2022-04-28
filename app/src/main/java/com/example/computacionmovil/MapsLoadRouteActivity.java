@@ -3,6 +3,7 @@ package com.example.computacionmovil;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,11 +32,15 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapReadyCallback {
-    //Declaramos un array que contendrá todas las medidas de la ruta cargada
+    //Declaramos un array que contendrá todas las etapas de la ruta cargada
     private Etapa[] arrayEtapas;
+
+    //Declaramos nuestra arrayList que contendra todas las antenas
+    private ArrayList<LatLng> arrayAntenas;
 
     //Variable con el nombre de la ruta cargada
     private String name;
@@ -47,6 +53,7 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
     LocationCallback callback;
     LocationRequest request;
 
+    //Declaramos las variables necesarias para mostrar el mapa
     private GoogleMap gM;
     private MapView mMapView;
 
@@ -70,15 +77,17 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
             name = getIntent().getStringExtra("name");
         }
 
-        //Obtenemos las medidas para la ruta seleccionada
+        //Obtenemos el recorrido para la ruta seleccionada junto con todos sus valores
         try {
-            arrayEtapas = StorageHelper.readRecorridoFromFile(name,getApplicationContext()).getEtapas();
+            Recorrido r = StorageHelper.readRecorridoFromFile(name,getApplicationContext());
+            arrayAntenas = r.getAntenas();
+            arrayEtapas = r.getEtapas();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         //Inicializamos la lista con los valores del las medidas
-        listMeasures =findViewById(R.id.LoadRouteData_Text_listViewStages);
+        listMeasures = findViewById(R.id.LoadRouteData_Text_listViewStages);
         arrayLecturas = new ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -88,7 +97,7 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
             }
         };
 
-
+        //Establecemos la lista de lecturas con todos los valores de las mediciones
         for (Etapa e : arrayEtapas){
             if(e!=null){
                 for(Medida m : e.getMedidasEtapa()){
@@ -102,7 +111,7 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
 
         listMeasures.setAdapter(arrayLecturas);
 
-        //Creamos la solicitudes periodicas de la ubicación cada cierto tiempo
+        //Creamos las solicitudes periodicas de la ubicación cada cierto tiempo
         client = LocationServices.getFusedLocationProviderClient(this);
         request = LocationRequest.create();
 
@@ -127,6 +136,7 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         Medida medidaAnterior = null;
+        Medida medidaPrimera = null;
 
         gM = googleMap;
         startShowingLocation();
@@ -138,7 +148,7 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
                         String text = getApplicationContext().getString(R.string.medida_textDescription1) + " " + m.getEtapa() + " " + getApplicationContext().getString(R.string.medida_textDescription2) + " " +  m.getAntena() + "G " + getApplicationContext().getString(R.string.medida_textDescription4) + " " + m.getDbm() + "dbm\n\n";
                         Objects.requireNonNull(gM.addMarker(new MarkerOptions().position(new LatLng(m.getLatitud(), m.getLongitud())).title(text))).setIcon(BitmapDescriptorFactory.defaultMarker(Auxiliar.obtenerTipoMarcador(m.getDbm(), m.getAntena())));
 
-                        //Añadimos una línea entre los dos puntos para conocer el recorrido que hemos hecho
+                        //Añadimos una línea entre los dos puntos para conocer el recorrido que hemos hecho, y añadimos líneas de conexión entre la antena y las mediciones
                         if(medidaAnterior!=null){
                             Polyline line = gM.addPolyline(new PolylineOptions()
                                     .add(new LatLng(medidaAnterior.getLatitud(), medidaAnterior.getLongitud()), new LatLng(m.getLatitud(), m.getLongitud()))
@@ -146,10 +156,31 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
                                     .color(Auxiliar.getColorStage(m.getEtapa())));
                         }
 
+                        //Mostramos la línea que conecta la antena con la medición
+                        int pos=0;
+                        if(m.getPosAntena()>0){
+                            pos=m.getPosAntena()-1;
+                        }
+                        LatLng antenaCon = arrayAntenas.get(pos);
+                        Polyline lineAntenna = gM.addPolyline(new PolylineOptions()
+                                .add(new LatLng(antenaCon.latitude, antenaCon.longitude), new LatLng(m.getLatitud(), m.getLongitud()))
+                                .width(2)
+                                .color(Color.BLACK));
+
                         medidaAnterior = m;
+                        if(medidaPrimera==null){
+                            medidaPrimera=m;
+                        }
 
                     }
                 }
+            }
+        }
+        assert medidaPrimera != null;
+        gM.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(medidaPrimera.getLatitud(),medidaPrimera.getLongitud()), 40));
+        for(LatLng a : arrayAntenas){
+            if(a!=null){
+                Objects.requireNonNull(gM.addMarker(new MarkerOptions().position(a).title(getApplicationContext().getString(R.string.mapsRoute_text_Tower)))).setIcon(Auxiliar.getBitmapDescriptor(getApplicationContext(),R.drawable.antena));
             }
         }
     }

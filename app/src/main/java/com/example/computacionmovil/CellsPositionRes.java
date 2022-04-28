@@ -12,9 +12,7 @@ public class CellsPositionRes {
     @Expose
     private Data data;
 
-    public Integer getResult() {
-        return result;
-    }
+    public Integer getResult() { return result; }
 
     public void setResult(Integer result) {
         this.result = result;

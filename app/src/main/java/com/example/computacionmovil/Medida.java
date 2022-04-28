@@ -16,6 +16,7 @@ public class Medida {
     @Expose private double latitud;
     @Expose private int antena;
     @Expose private int dbm;
+    @Expose private int posAntena;
 
     private static Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
 
@@ -24,7 +25,7 @@ public class Medida {
      *
      */
 
-    public Medida(Context context, int etapa, double longitud, double latitud, int antena, int dbm) {
+    public Medida(Context context, int etapa, double longitud, double latitud, int antena, int dbm, int posAntena) {
         super();
         this.context = context;
         this.etapa = etapa;
@@ -32,6 +33,7 @@ public class Medida {
         this.latitud = latitud;
         this.antena = antena;
         this.dbm = dbm;
+        this.posAntena =posAntena;
     }
 
     public int getEtapa() {
@@ -56,6 +58,10 @@ public class Medida {
 
     public int getDbm() {
         return dbm;
+    }
+
+    public int getPosAntena() {
+        return posAntena;
     }
 
     public JsonElement toJson(){

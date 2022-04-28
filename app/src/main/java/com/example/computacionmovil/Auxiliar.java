@@ -1,11 +1,17 @@
 package com.example.computacionmovil;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 public class Auxiliar {
-
+    //Método para obtener los colores de cada medición en función de la antena sobre la que se mide y del valor medido.
     public static float obtenerTipoMarcador(int valueMeasured, int antenna) {
         //Fuente de los datos(4G y 3G): https://www.xatakandroid.com/productividad-herramientas/como-saber-intensidad-senal-movil-android-que-significan-valores-dbm
         //Fuente de los datos(2G): https://norfipc.com/redes/intensidad-nivel-senal-redes-moviles-2g-3g-4g.php
@@ -73,7 +79,8 @@ public class Auxiliar {
         return BitmapDescriptorFactory.HUE_BLUE;
     }
 
-    //Para distinguir las distintas etapa, vamos a asignar un color distinto a cada una en función de su módulo
+    //Método para obtener el color de una etapa
+    // Utilizado para distinguir las lineas que unen las mediciones de las distintas etapas
     static int getColorStage(int stage) {
         int modStage = stage%5;
         switch (modStage){
@@ -91,4 +98,15 @@ public class Auxiliar {
         return Color.BLACK;
     }
 
+    //Método para convertir un drawable en un bitMapDescriptor
+    static BitmapDescriptor getBitmapDescriptor(Context context, int id) {
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable vectorDrawable = context.getDrawable(id);
+        int h = vectorDrawable.getIntrinsicHeight();
+        int w = vectorDrawable.getIntrinsicWidth();
+        vectorDrawable.setBounds(0, 0, w, h);
+        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bm);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bm);
+    }
 }

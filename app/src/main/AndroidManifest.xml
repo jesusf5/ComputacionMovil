@@ -39,14 +39,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyChHeEs31lIpEPLTsMegyLc6-vFfFDPo64" />
 
-        <activity
-            android:name=".MapsActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name=".LocationActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"/>
         <activity android:name=".LoadRouteActivity"
             android:exported="true"
             android:screenOrientation="portrait"/>

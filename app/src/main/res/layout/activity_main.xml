@@ -8,9 +8,9 @@
 
     <Button
         android:id="@+id/main_Button_LoadRoutes"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="68dp"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="80dp"
         android:onClick="openLoadRouteActivity"
         android:text="@string/main_button_loadSaved"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,48 +20,22 @@
 
     <Button
         android:id="@+id/main_Button_NewRoute"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="60dp"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="80dp"
         android:onClick="openCreateRouteActivity"
         android:text="@string/main_button_newReco"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.539"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_Button_LoadRoutes" />
-
-    <Button
-        android:id="@+id/main_Button_ActivityLocation"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="60dp"
-        android:onClick="openLocationActivity"
-        android:text="@string/main_button_activityLocation"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.549"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_Button_NewRoute" />
-
-    <Button
-        android:id="@+id/main_Button_ActivityMaps"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="60dp"
-        android:onClick="openMapsActivity"
-        android:text="@string/main_button_activityMaps"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.552"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_Button_ActivityLocation" />
 
     <TextView
         android:id="@+id/main_Text_TittleTotalKilometers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
         android:text="@string/main_tittle_total_m"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -70,8 +44,8 @@
         android:id="@+id/main_Text_TittleTotalMeasurement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
         android:text="@string/main_tittle_total_medition"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_Text_TittleTotalKilometers" />
@@ -80,8 +54,8 @@
         android:id="@+id/main_Text_ValueTotalMeters"
         android:layout_width="wrap_content"
         android:layout_height="18dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="40dp"
         android:text="@string/NULL"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/main_Text_TittleTotalKilometers"
@@ -91,11 +65,9 @@
         android:id="@+id/main_Text_ValueTotalMeasurement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="68dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="40dp"
         android:text="@string/NULL"
-        app:layout_constraintBottom_toTopOf="@+id/main_Button_LoadRoutes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/main_Text_TittleTotalMeasurement"
         app:layout_constraintTop_toBottomOf="@+id/main_Text_ValueTotalMeters" />

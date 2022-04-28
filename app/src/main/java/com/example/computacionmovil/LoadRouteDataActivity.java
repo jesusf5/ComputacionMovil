@@ -27,6 +27,7 @@ public class LoadRouteDataActivity extends AppCompatActivity {
     BarChart barChart;
     private ListView listRoutes;
 
+    //String con el nombre de la ruta cargada
     private String name;
 
     //Lista de etapas
@@ -43,6 +44,7 @@ public class LoadRouteDataActivity extends AppCompatActivity {
             name = getIntent().getStringExtra("name");
         }
 
+        //Cargamos todas las etapas de la ruta
         try {
             etapas = StorageHelper.readRecorridoFromFile(name,getApplicationContext()).getEtapas();
         } catch (IOException e) {
@@ -55,6 +57,7 @@ public class LoadRouteDataActivity extends AppCompatActivity {
         //Inicializamos lista con las medidas que podemos cargar
         listRoutes = findViewById(R.id.LoadRouteData_Text_listViewStages);
         listRoutes.setClickable(true);
+
         //Establecemos un listener para poder seleccionar los distintos elementos de la lista
         listRoutes.setOnItemClickListener((arg0, arg1, position, arg3) -> {
             listRoutes.setSelector(R.drawable.selecteditem);
@@ -82,7 +85,7 @@ public class LoadRouteDataActivity extends AppCompatActivity {
         barArraylist = new ArrayList();
         for(Medida m : e.getMedidasEtapa()){
             if(m!=null){
-
+                //Convertimos el color HSV obtenido por el método de color de los marcadores a RGB Color
                 float[] arrayHSV = new float[3];
                 arrayHSV[0]=Auxiliar.obtenerTipoMarcador(m.getDbm(),m.getAntena());
                 arrayHSV[1]=100;
@@ -94,6 +97,7 @@ public class LoadRouteDataActivity extends AppCompatActivity {
             }
         }
 
+        //Declaramos los parámetros del gráfico
         barDataSet = new BarDataSet(barArraylist, "Gráfico de etapa seleccionada");
         BarData barData = new BarData(barDataSet);
         barChart.setData(barData);

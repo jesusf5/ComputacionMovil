@@ -7,10 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.telephony.CellInfo;
@@ -37,10 +34,10 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -49,7 +46,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,7 +61,7 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     //Creamos una serie de variables que se extraen directamente desde la pantalla de creación de la ruta
     private String name; //Nombre de la ruta que se esta creando, necesario para al cargar cada ruta saber cual es cada una.
     private int antenna; //Se permite al usuario especificar con que antena realizar las mediciones, pero por limitaciones de los propios dispositivos el uso de las antenas deberá ser forzado desde los ajustes del teléfono
-    private int intervalMetersMeaures; //Permitimos al usuario especificar un intervalo de actualizaciones pero por defecto ponemos un intervalo de 10 segundos
+    private int intervalMetersMeaures; //Permitimos al usuario especificar un intervalo de actualizaciones pero por defecto ponemos un intervalo de 5 metros
 
     // Declaramos una serie de TextView para mostrar datos en tiempo real
     private TextView valueNameRoute, valueSelectedAntennas, valueReadAntennas, valueNameStage, valueNameSIM;
@@ -73,7 +70,7 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     private MapView mMapView;
     private int intervalSecondsMeaures = 5000; //Intervalo de milisegundos entre las peticiones de la ubicación
 
-    //Creamos la variables necesarias para obtener la latitud y longitud de nuestra ubicación actual
+    //Creamos la variables necesarias para obtener la latitud y longitud de nuestra ubicación actual y para mostrar los mapas
     private FusedLocationProviderClient client;
     LocationCallback callback;
     LocationRequest request;
@@ -81,7 +78,7 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     private Location locationAnterior;
     private GoogleMap gM;
 
-    //Valor leido por la antena correspondiente
+    //Valor leido por la lectura de la antena correspondiente (la del movil)
     private int valueAntenna = 0;
 
     //Creamos una variable para definir el número de la etapa en la que nos encotramos
@@ -91,11 +88,20 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     private ListView listMeasures;
     private ArrayAdapter<String> arrayLecturas;
 
+    //Guardamos la posición de la antena actual y anterior
+    private LatLng antenaActual,antenaAnterior;
+
+    //Variable para comprobar si conocemos la antena a la que estamos conectados
+    private boolean antenaReady = false;
+
     //Array de las distintas medidas realizadas
     //Establecemos un límite de 100 mediciones por cada etapa
     // Y un límite de 100 etapas como mucho por recorrido
     Medida[] arrayDeMedidas = new Medida[100];
     Etapa[] arrayDeEtapas = new Etapa[100];
+
+    //Declaramos un array con todas la antenas que se van encontrando
+    ArrayList<LatLng> arrayAntenas;
 
 
     //Creamos una serie de variables para posteriormente crear una variable de tipo recorrido que almacenar en un fichero
@@ -149,6 +155,9 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
         valueSelectedAntennas.setText(antenna + "G");
         valueNameStage.setText(String.valueOf(stage));
 
+        //Inicializamos nuestro array de antenas
+        arrayAntenas = new ArrayList<>();
+
         //Creamos la solicitudes periodicas de la ubicación cada tiempo especificado por el usuario
         client = LocationServices.getFusedLocationProviderClient(this);
         request = LocationRequest.create();
@@ -163,20 +172,36 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                 super.onLocationResult(locationResult);
                 //Recibimos la nueva localización
                 for (Location location : locationResult.getLocations()) {
+                    //Para la primera ubicación, hacemos un zoom que centre la camara en el usuario
+                    if(locationActual==null){
+                        gM.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()), 16));
+                    }
                     locationActual = location;
                 }
-                //Comprobamos que la distancia sea mayor a la especificada o que sea la primera antes de realizar una nueva medición
-                //TODO QUITAR PROVISIONAL
-                if(true){//locationAnterior==null || locationAnterior.distanceTo(locationActual)>intervalMetersMeaures){
 
+                //Medición inicial para conocer la antena
+                readValueAntenna(antenna);
+
+                //Retrofit para enviar a la API una solicitud con los parametros obtenidos
+                mostrarTorresTelefonia();
+
+                //Comprobamos que la distancia sea mayor a la especificada o que sea la primera antes de realizar una nueva medición
+                if(antenaReady && (locationAnterior==null || locationAnterior.distanceTo(locationActual)>intervalMetersMeaures)){
+
+                    //Obtenemos la distancia entre la medición anterior y la actual
                     float distance = 0;
                     if(locationAnterior!=null){
                         distance = locationAnterior.distanceTo(locationActual);
                     }
 
-                    //Cada vez que obtenemos una ubicación realizamos una lectura
-                    valueAntenna = readValueAntenna(antenna);
-                    //Comprobamos si se produce algun error en la lectura
+                    //Cada vez que obtenemos una ubicación realizamos una serie de lecturas y nos quedamos con la media de estas lecturas
+                    valueAntenna=0;
+                    for(int l=0; l<10;l++){
+                        valueAntenna = valueAntenna + readValueAntenna(antenna);
+                    }
+                    valueAntenna = (valueAntenna/10);
+
+                    //Comprobamos si se produce algun error en la lectura del valor de la antena
                     if(valueAntenna==0){
                         valueReadAntennas.setTextColor(ColorStateList.valueOf(0xFFFF0000));
                         valueReadAntennas.setText(R.string.mapsRoute_error_SIM);
@@ -184,13 +209,23 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                         valueReadAntennas.setTextColor(ColorStateList.valueOf(0xFFFF0000));
                         valueReadAntennas.setText(R.string.mapsRoute_error_Antenna);
                     }else{
+
+                        //Comprobamos si la antena ha variado respecto a la anterior medición
+                        if(antenaActual!=null && antenaAnterior!=null && (antenaActual.longitude!=antenaAnterior.longitude || antenaActual.latitude!=antenaAnterior.latitude)){
+                            antenaAnterior=antenaActual;
+                            arrayAntenas.add(antenaActual);
+                        }else if(antenaActual!=null && antenaAnterior==null){
+                            antenaAnterior=antenaActual;
+                            arrayAntenas.add(antenaActual);
+                        }
+
                         //Si va bien, aumentamos el número de lecturas que llevamos, la almacenamos en nuestro array y mostramos la lectura por pantalla en un texto.
                         nMedidas++;
                         nMedidasEtapa++;
                         valueReadAntennas.setTextColor(ColorStateList.valueOf(getResources().getColor(R.color.black)));
                         String newLine = "Nº" + nMedidas + ": " + getApplicationContext().getString(R.string.medida_textDescription1) + " " + stage + getApplicationContext().getString(R.string.medida_textDescription2) + " " +  antenna + "G " + getApplicationContext().getString(R.string.medida_textDescription4) + " " + valueAntenna + " dbm";
                         if(nMedidasEtapa<100){
-                            arrayDeMedidas[nMedidasEtapa] = new Medida(getApplicationContext(), stage,locationActual.getLongitude(),locationActual.getLatitude(),antenna,valueAntenna);
+                            arrayDeMedidas[nMedidasEtapa] = new Medida(getApplicationContext(), stage,locationActual.getLongitude(),locationActual.getLatitude(),antenna,valueAntenna,arrayAntenas.size());
 
                             //Guardamos los valores que posteriormente utilizaremos para nuestro objeto recorrido
                             if(minMedida>valueAntenna){
@@ -224,10 +259,7 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                             newStage();
                         }
 
-                        //Retrofit para enviar a la API una solicitud con los parametros obtenidos
-                        mostrarTorresTelefonia();
-
-                        //Añadimos la distancia a un fichero para tenerla después
+                        //Añadimos la distancia a un fichero para tenerla después y mostrarla, a modo de curiosidad
                         String distanciaGuardada="0";
                         try {
                             distanciaGuardada=StorageHelper.readStringFromFile(getString(R.string.fileDistances),getApplicationContext());
@@ -241,18 +273,28 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                             e.printStackTrace();
                         }
 
-                        //Añadimos una línea entre los dos puntos para conocer el recorrido que hemos hecho
+                        //Añadimos una línea entre los dos puntos para conocer el recorrido que hemos hecho, y entre la antena y la medición para saber a que antena estamos conectados
                         if(locationAnterior!=null && nMedidas<100){
                             Polyline line = gM.addPolyline(new PolylineOptions()
                                     .add(new LatLng(locationAnterior.getLatitude(), locationAnterior.getLongitude()), new LatLng(locationActual.getLatitude(), locationActual.getLongitude()))
                                     .width(5)
                                     .color(Auxiliar.getColorStage(stage)));
                         }
+                        if(antenaActual!=null){
+                            Polyline lineAntenna = gM.addPolyline(new PolylineOptions()
+                                    .add(new LatLng(antenaActual.latitude, antenaActual.longitude), new LatLng(locationActual.getLatitude(), locationActual.getLongitude()))
+                                    .width(2)
+                                    .color(Color.BLACK));
+                        }
                         if(nMedidas<100){
                             locationAnterior = locationActual;
                         }
                     }
-                }else{
+                }//En caso de no alcanzar la distancia especificada, esperamos a la siguiente ubicación
+                else if(!antenaReady){
+                    valueReadAntennas.setTextColor(ColorStateList.valueOf(0xFFFF0000));
+                    valueReadAntennas.setText(R.string.mapsRoute_error_readyAntena);
+                } else {
                     valueReadAntennas.setTextColor(ColorStateList.valueOf(0xFFFF0000));
                     valueReadAntennas.setText(R.string.mapsRoute_error_intervalDistance);
                 }
@@ -302,7 +344,6 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
         //Comprobamos que el dispositivo cuente con alguna celda
         if(cellInfos!=null){
             int strength = -200;
-            int registeredIndex = 0;
             for (int i = 0; i<cellInfos.size(); i++){
                 if (cellInfos.get(i).isRegistered()){
                     if(antenna==2 && cellInfos.get(i) instanceof CellInfoGsm){
@@ -334,8 +375,6 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                         cellid = cellInfoLte.getCellIdentity().getCi();
                     }
                     return strength;
-                }else if(cellInfos.get(i).isRegistered()){
-                    registeredIndex++;
                 }
             }
             return strength;
@@ -366,22 +405,24 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
 
         call.enqueue(new Callback<CellsPositionRes>() {
             @Override
-            public void onResponse(Call<CellsPositionRes> call, Response<CellsPositionRes> response) {
+            public void onResponse(@NonNull Call<CellsPositionRes> call, @NonNull Response<CellsPositionRes> response) {
                 if (!response.isSuccessful()) {
                     Log.i(TAG, "Error" + response.code());
                 } else {
+                    antenaReady=true;
                     CellsPositionRes cellsPositions = response.body();
                     assert cellsPositions != null;
                     Log.d("Resultado latitud: ", String.valueOf(cellsPositions.getData().getLat()));
                     Log.d("Resultado longitud: ", String.valueOf(cellsPositions.getData().getLon()));
 
                     LatLng location = new LatLng(cellsPositions.getData().getLat(), cellsPositions.getData().getLon());
-                    Objects.requireNonNull(gM.addMarker(new MarkerOptions().position(location).title(getApplicationContext().getString(R.string.mapsRoute_text_Tower)))).setIcon(getBitmapDescriptor(R.drawable.antena));
+                    Objects.requireNonNull(gM.addMarker(new MarkerOptions().position(location).title(getApplicationContext().getString(R.string.mapsRoute_text_Tower)))).setIcon(Auxiliar.getBitmapDescriptor(getApplicationContext(),R.drawable.antena));
+                    antenaActual = location;
                 }
             }
 
             @Override
-            public void onFailure(Call<CellsPositionRes> call, Throwable t) {
+            public void onFailure(@NonNull Call<CellsPositionRes> call, @NonNull Throwable t) {
                 Log.e("error", t.toString());
             }
         });
@@ -440,7 +481,21 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                     arrayDeMedidas = new Medida[100];
                 }
             }
-            Recorrido r = new Recorrido(getApplicationContext(), minMedida, (medMedida / nMedidas), maxMedida, nMedidas, arrayDeEtapas);
+            Recorrido r = new Recorrido(getApplicationContext(), minMedida, (medMedida / nMedidas), maxMedida, nMedidas, arrayAntenas, arrayDeEtapas);
+            //Creamos un array JSON para guardar todas nuestras medicioens
+            JsonObject res = new JsonObject();
+
+            res.add("recorrido", r.toJson());
+
+            //Guardamos el array JSON en un fichero con el nombre pasado como parámetro
+            try {
+                StorageHelper.saveStringToFile(name + ".json", res.toString(), this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } //En caso de que no tengamos mediciones en la etapa actual y estemos en una etapa posterior a la primera, sabemos que hemos llegado hasta ese punto porque en la primera etapa, al menos, se guardo una medición, por lo que simplemente guardamos todas las etapas anteriores en el recorrido.
+        else if(stage>1){
+            Recorrido r = new Recorrido(getApplicationContext(), minMedida, (medMedida / nMedidas), maxMedida, nMedidas, arrayAntenas, arrayDeEtapas);
             //Creamos un array JSON para guardar todas nuestras medicioens
             JsonObject res = new JsonObject();
 
@@ -466,7 +521,6 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
     private void newStage(){
         //Guardamos los valores para la etapa actual
         if(nMedidasEtapa>0 && stage<99){
-
             Medida[] arrayDePaso = new Medida[nMedidasEtapa];
             int i = 0;
             for(Medida m : arrayDeMedidas){
@@ -489,7 +543,7 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
             //Iniciamos una nueva etapa sumando uno al número de etapa y mostrando el valor por pantalla
             stage = stage +1;
             valueNameStage.setText(String.valueOf(stage));
-        }else if(stage<100){
+        }else if(stage<99){
             valueReadAntennas.setTextColor(ColorStateList.valueOf(0xFFFF0000));
             valueReadAntennas.setText(R.string.mapsRoute_error_Stage);
         }else{
@@ -502,16 +556,4 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
         newStage();
     }
 
-    //Método para convertir un drawable en un bitMapDescriptor
-    private BitmapDescriptor getBitmapDescriptor(int id) {
-        Context context = getApplicationContext();
-        Drawable vectorDrawable = context.getDrawable(id);
-        int h = vectorDrawable.getIntrinsicHeight();
-        int w = vectorDrawable.getIntrinsicWidth();
-        vectorDrawable.setBounds(0, 0, w, h);
-        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bm);
-        vectorDrawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bm);
-    }
 }

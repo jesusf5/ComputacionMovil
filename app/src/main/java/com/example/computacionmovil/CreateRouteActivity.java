@@ -70,9 +70,9 @@ public class CreateRouteActivity extends AppCompatActivity {
     }
 
     public void createRoute(View w){
-        //Antes de crear la ruta comprobamos que vaya a surgir errores con los valores introducidos
+        //Antes de crear la ruta comprobamos que no vayan a surgir errores con los valores introducidos
         //Para ello creamos un variable booleana de error para cada uno de los datos introducidos(inicialmente a false todas)
-        boolean errorName = false, errorInterval = false, errorSIM = false;
+        boolean errorName = false, errorInterval = false;
 
         //Comprobamos si existen errores para el nombre introducido
         if(name.getText().toString().length()==0 || name.getText().toString().length()>100){
@@ -100,7 +100,7 @@ public class CreateRouteActivity extends AppCompatActivity {
         }
 
         //Comprobamos que no se haya producido ningun error antes de pasar a crear la nueva ruta
-        if((!errorName)&&(!errorInterval)&&(!errorSIM)){
+        if((!errorName)&&(!errorInterval)){
             Intent intent=new Intent(this, MapsRoutesActivity.class);
 
             //Pasamos los parametros seleccionados en la creación de la ruta
@@ -115,6 +115,7 @@ public class CreateRouteActivity extends AppCompatActivity {
         }
     }
 
+    //Método para comprobar si un nombre introducido para una nueva ruta ya esta repetido
     private boolean comprobarRepetido(String name) {
         //Obtenemos la lista de ficheros en el directorio que almacena los datos de la aplicación y por ende, los ficheros JSON con las mediciones guardadas.
         File[] files = getApplicationContext().getExternalFilesDir("").listFiles();

@@ -53,8 +53,12 @@
     <string name="mapsRoute_error_Antenna">La antena seleccionada no esta disponible para la SIM seleccionada</string>
     <string name="mapsRoute_error_limitMeasurement">Número máximo de medidas alcanzado para la etapa actual, iniciando nueva etapa</string>
     <string name="mapsRoute_error_intervalDistance">Esperando a alcanzar la distancia especificada</string>
+    <string name="mapsRoute_error_readyAntena">Esperando datos sobre antenas</string>
 
     <string name="mapsActivity_button_save">GUARDAR</string>
+
+    <string name="loadRouteMaps_button_exit">SALIR</string>
+    <string name="loadRouteMaps_button_MoreData">MÁS DATOS</string>
 
     <string name="medida_textDescription1">Etapa </string>
     <string name="medida_textDescription2">, antena </string>

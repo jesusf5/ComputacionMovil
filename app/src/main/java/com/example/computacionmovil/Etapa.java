@@ -57,6 +57,7 @@ public class Etapa {
         return medidasEtapa;
     }
 
+
     public JsonElement toJson(){
         JsonArray arrayMedidasJSON=new JsonArray();
 

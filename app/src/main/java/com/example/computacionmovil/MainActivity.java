@@ -69,16 +69,6 @@ public class MainActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.main_Text_ValueTotalMeters)).setText(distances);
     }
 
-    public void openLocationActivity(View w){
-        Intent intent=new Intent(this, LocationActivity.class);
-        startActivity(intent);
-    }
-
-    public void openMapsActivity(View w){
-        Intent intent=new Intent(this, MapsActivity.class);
-        startActivity(intent);
-    }
-
     public void openCreateRouteActivity(View w){
         Intent intent=new Intent(this, CreateRouteActivity.class);
         startActivity(intent);
