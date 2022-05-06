@@ -42,6 +42,9 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
     //Declaramos nuestra arrayList que contendra todas las antenas
     private ArrayList<LatLng> arrayAntenas;
 
+    //Antena del dispositivo movil utilizada
+    private int antenna = 0;
+
     //Variable con el nombre de la ruta cargada
     private String name;
 
@@ -104,6 +107,7 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
                     if(m!=null) {
                         String text = getApplicationContext().getString(R.string.medida_textDescription1) + " " + m.getEtapa() + " " + getApplicationContext().getString(R.string.medida_textDescription2) + " " + m.getAntena() + "G " + getApplicationContext().getString(R.string.medida_textDescription4) + " " + m.getDbm() + "dbm" + getApplicationContext().getString(R.string.medida_textDescription3) + " (" + m.getLatitud() + "," + m.getLongitud() + ") " + "\n\n";
                         arrayLecturas.add(text);
+                        antenna=m.getAntena();
                     }
                 }
             }
@@ -162,11 +166,12 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
                             pos=m.getPosAntena()-1;
                         }
                         LatLng antenaCon = arrayAntenas.get(pos);
-                        Polyline lineAntenna = gM.addPolyline(new PolylineOptions()
-                                .add(new LatLng(antenaCon.latitude, antenaCon.longitude), new LatLng(m.getLatitud(), m.getLongitud()))
-                                .width(2)
-                                .color(Color.BLACK));
-
+                        if(m.getAntena()==4){
+                            Polyline lineAntenna = gM.addPolyline(new PolylineOptions()
+                                    .add(new LatLng(antenaCon.latitude, antenaCon.longitude), new LatLng(m.getLatitud(), m.getLongitud()))
+                                    .width(2)
+                                    .color(Color.BLACK));
+                        }
                         medidaAnterior = m;
                         if(medidaPrimera==null){
                             medidaPrimera=m;
@@ -179,7 +184,8 @@ public class MapsLoadRouteActivity extends AppCompatActivity implements OnMapRea
         assert medidaPrimera != null;
         gM.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(medidaPrimera.getLatitud(),medidaPrimera.getLongitud()), 40));
         for(LatLng a : arrayAntenas){
-            if(a!=null){
+            //Puesto que se trata de un opcional, unicamente mostraremos las antenas para los recorridos realizados sobre 4G
+            if(a!=null && antenna==4){
                 Objects.requireNonNull(gM.addMarker(new MarkerOptions().position(a).title(getApplicationContext().getString(R.string.mapsRoute_text_Tower)))).setIcon(Auxiliar.getBitmapDescriptor(getApplicationContext(),R.drawable.antena));
             }
         }

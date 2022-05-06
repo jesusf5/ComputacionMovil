@@ -280,7 +280,7 @@ public class MapsRoutesActivity extends AppCompatActivity implements OnMapReadyC
                                     .width(5)
                                     .color(Auxiliar.getColorStage(stage)));
                         }
-                        if(antenaActual!=null){
+                        if(antenaActual!=null && antenna==4){
                             Polyline lineAntenna = gM.addPolyline(new PolylineOptions()
                                     .add(new LatLng(antenaActual.latitude, antenaActual.longitude), new LatLng(locationActual.getLatitude(), locationActual.getLongitude()))
                                     .width(2)
